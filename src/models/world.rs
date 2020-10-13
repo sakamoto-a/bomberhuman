@@ -12,9 +12,18 @@ pub struct World {
 impl World {
     pub fn new(size: Size) -> World {
         let mut players: Vec<Player> = Vec::new();
-        for n in 0..1 {
-            let mut point = Point::new(1.0, 2.3);
-            players.push(Player::new(point, 1, 1.0));
+        for n in 0..2 {
+            match n {
+                0 => {
+                    let mut point = Point::new(0.0, 0.0);
+                    players.push(Player::new(point, 150.0, 0.0));
+                },
+                1 => {
+                    let mut point = Point::new(500.0, 300.0);
+                    players.push(Player::new(point, 150.0, 0.0));
+                },
+                _ => (),
+            }
         }
         World {
             players: players,
@@ -23,10 +32,9 @@ impl World {
     }
 
     pub fn update(&mut self, dt: f64, actions: &Actions) {
-        //for player in &mut self.players.iter() {
-        //    player.update(&dt, &actions);
-        //}
-        self.players[0].update(&dt, actions);
+        for player in &mut self.players {
+            player.update(&dt, actions);
+        }
     }
 
 }
