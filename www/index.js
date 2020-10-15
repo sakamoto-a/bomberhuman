@@ -12,10 +12,12 @@ ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 const resources = () => {
   let res = {
-    player: document.createElement('img'),
+    player0: document.createElement('img'),
+    player1: document.createElement('img'),
   }
 
-  res.player.src = "/image/1p.png";
+  res.player0.src = "/image/1p.png";
+  res.player1.src = "/image/1s.png";
 
   return res;
 }
@@ -25,11 +27,21 @@ let clear_screen = () => {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
-function draw_player(x, y, angle) {
+function draw_player(x, y, angle, player_id) {
   ctx.translate(x, y);
-  //ctx.rotate(angle);
-
-  ctx.drawImage(res.player, 0, 0, 100, 130);
+  ctx.translate(50,65);
+  ctx.rotate(angle);
+  ctx.translate(-50,-65);
+  switch(player_id) {
+    case 0:
+      ctx.drawImage(res.player0, 0, 0, 100, 130);
+      break;
+    case 1:
+      ctx.drawImage(res.player1, 0, 0, 100, 130);
+      break;
+    default:
+      break;
+  }
   ctx.setTransform(1, 0, 0, 1, 0, 0);
 
   ctx.fillStyle = "black";
@@ -55,38 +67,50 @@ let drawAndUpdate = (timestamp) => {
   let progress = (timestamp - prevTimestamp) / 1000;
   game_data.update(progress);
   clear_screen();
-  let x_0 = game_data.x(0);
-  let y_0 = game_data.y(0);
-  let angle_0 = game_data.angle(0);
-  draw_player(x_0, y_0, angle_0);
-
-  let x_1 = game_data.x(1);
-  let y_1 = game_data.y(1);
-  let angle_1 = game_data.angle(1);
-  draw_player(x_1, y_1, angle_1);
+  let player_num = game_data.get_player_num();
+  var x = [];
+  var y = [];
+  var angle = [];
+  for(let i=0; i<player_num; i++) {
+    x[i] = game_data.x(i);
+    y[i] = game_data.y(i);
+    angle[i] = game_data.angle(i);
+    draw_player(x[i], y[i], angle[i], i);
+  }
 
   prevTimestamp = timestamp;
   requestAnimationFrame(drawAndUpdate);
 };
 
 const play = () => {
-  //resize();
   drawAndUpdate();
 }
 
 const processKey = (key, f) => {
   switch (key) {
     case "ArrowLeft":
-      game_data.actions("move_left", f);
+      game_data.buttons("left", f);
       break;
     case "ArrowRight":
-      game_data.actions("move_right", f);
+      game_data.buttons("right", f);
       break;
     case "ArrowUp":
-      game_data.actions("move_up", f);
+      game_data.buttons("up", f);
       break;
     case "ArrowDown":
-      game_data.actions("move_down", f);
+      game_data.buttons("down", f);
+      break;
+    case "w":
+      game_data.buttons("w", f);
+      break;
+    case "s":
+      game_data.buttons("s", f);
+      break;
+    case "a":
+      game_data.buttons("a", f);
+      break;
+    case "d":
+      game_data.buttons("d", f);
       break;
   }
 }

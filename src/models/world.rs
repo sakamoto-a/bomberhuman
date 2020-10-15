@@ -1,8 +1,8 @@
-use rand::Rng;
 use crate::models::Player;
 use crate::geometory::Point;
 use crate::geometory::Size;
 use crate::controller::Actions;
+use crate::controller::Buttons;
 
 pub struct World {
     pub players: Vec<Player>,
@@ -15,12 +15,14 @@ impl World {
         for n in 0..2 {
             match n {
                 0 => {
-                    let mut point = Point::new(0.0, 0.0);
-                    players.push(Player::new(point, 150.0, 0.0));
+                    let point = Point::new(0.0, 0.0);
+                    let mut actions = Actions::new("up", "down", "left", "right");
+                    players.push(Player::new(point, 150.0, 0.0, actions));
                 },
                 1 => {
-                    let mut point = Point::new(500.0, 300.0);
-                    players.push(Player::new(point, 150.0, 0.0));
+                    let point = Point::new(500.0, 300.0);
+                    let mut actions = Actions::new("w", "s", "a", "d");
+                    players.push(Player::new(point, 150.0, 0.0, actions));
                 },
                 _ => (),
             }
@@ -31,10 +33,13 @@ impl World {
         }
     }
 
-    pub fn update(&mut self, dt: f64, actions: &Actions) {
+    pub fn update(&mut self, dt: f64, buttons: &Buttons) {
         for player in &mut self.players {
-            player.update(&dt, actions);
+            player.update(&dt, buttons);
         }
     }
 
+    pub fn get_player_num(&mut self) -> usize {
+        self.players.len()
+    }
 }

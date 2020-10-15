@@ -1,7 +1,6 @@
-use std::fmt;
 use crate::models::World;
 use crate::geometory::Size;
-use crate::controller::Actions;
+use crate::controller::Buttons;
 
 pub struct GameState {
     pub world: World,
@@ -14,7 +13,7 @@ impl GameState {
         }
     }
 
-    pub fn update(&mut self, dt: f64, actions: &Actions) {
-        self.world.update(dt, actions);
+    pub fn update(&mut self, dt: f64, buttons: &Buttons) {
+        self.world.update(dt, buttons);
     }
 }

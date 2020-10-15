@@ -1,20 +1,17 @@
-use wasm_bindgen::prelude::*;
-
-#[wasm_bindgen]
 pub struct Actions {
-    pub move_up: bool,
-    pub move_down: bool,
-    pub move_left: bool,
-    pub move_right: bool
+    pub move_up: &'static str,
+    pub move_down: &'static str,
+    pub move_left: &'static str,
+    pub move_right: &'static str,
 }
 
 impl Actions {
-    pub fn new() -> Actions {
+    pub fn new(up: &'static str, down: &'static str, left: &'static str, right: &'static str) -> Actions {
         Actions {
-            move_up: false,
-            move_down: false,
-            move_left: false,
-            move_right: false,
+            move_up: up,
+            move_down: down,
+            move_left: left,
+            move_right: right,
         }
     }
 }

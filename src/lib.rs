@@ -5,14 +5,13 @@ pub mod controller;
 
 use self::game_state::GameState;
 use self::geometory::Size;
-use self::controller::Actions;
+use self::controller::Buttons;
 use wasm_bindgen::prelude::*;
-
 
 #[wasm_bindgen]
 pub struct GameData {
     game_state: GameState,
-    actions: Actions,
+    buttons: Buttons,
 }
 
 #[wasm_bindgen]
@@ -20,13 +19,13 @@ impl GameData {
     pub fn new() -> GameData {
         let width = 1024.0;
         let height = 840.0;
-        let mut game_state = GameState::new(Size::new(width, height));
-        let mut actions = Actions::new();
-        GameData { game_state, actions }
+        let game_state = GameState::new(Size::new(width, height));
+        let buttons = Buttons::new();
+        GameData { game_state, buttons }
     }
 
     pub fn update(&mut self, dt: f64) {
-        self.game_state.update(dt, &self.actions);
+        self.game_state.update(dt, &self.buttons);
     }
 
     pub fn width(&self) -> f64 {
@@ -37,12 +36,72 @@ impl GameData {
         self.game_state.world.size.height
     }
 
-    pub fn actions(&mut self, event: &str, flag: i32) {
+    pub fn buttons(&mut self, event: &str, flag: i32) {
         match event{
-            "move_left" => self.actions.move_left = int_to_bool(flag),
-            "move_right" => self.actions.move_right = int_to_bool(flag),
-            "move_up" => self.actions.move_up = int_to_bool(flag),
-            "move_down" => self.actions.move_down = int_to_bool(flag),
+            "up" => {
+              if flag == 1 {
+                self.buttons.button.retain(|&x| x != "up");
+                self.buttons.button.push("up");
+              } else {
+                self.buttons.button.retain(|&x| x != "up");
+              }
+            },
+            "down" => {
+              if flag == 1 {
+                self.buttons.button.retain(|&x| x != "down");
+                self.buttons.button.push("down");
+              } else {
+                self.buttons.button.retain(|&x| x != "down");
+              }
+            },
+            "left" => {
+              if flag == 1 {
+                self.buttons.button.retain(|&x| x != "left");
+                self.buttons.button.push("left");
+              } else {
+                self.buttons.button.retain(|&x| x != "left");
+              }
+            },
+            "right" => {
+              if flag == 1 {
+                self.buttons.button.retain(|&x| x != "right");
+                self.buttons.button.push("right");
+              } else {
+                self.buttons.button.retain(|&x| x != "right");
+              }
+            },
+            "w" => {
+              if flag == 1 {
+                self.buttons.button.retain(|&x| x != "w");
+                self.buttons.button.push("w");
+              } else {
+                self.buttons.button.retain(|&x| x != "w");
+              }
+            },
+            "s" => {
+              if flag == 1 {
+                self.buttons.button.retain(|&x| x != "s");
+                self.buttons.button.push("s");
+              } else {
+                self.buttons.button.retain(|&x| x != "s");
+              }
+            },
+            "a" => {
+              if flag == 1 {
+                self.buttons.button.retain(|&x| x != "a");
+                self.buttons.button.push("a");
+              } else {
+                self.buttons.button.retain(|&x| x != "a");
+              }
+            },
+            "d" => {
+              if flag == 1 {
+                self.buttons.button.retain(|&x| x != "d");
+                self.buttons.button.push("d");
+              } else {
+                self.buttons.button.retain(|&x| x != "d");
+              }
+            },
             _ => (),
         }
     }
@@ -57,8 +116,8 @@ impl GameData {
     pub fn angle(&mut self, p_num: usize) -> f64 {
         *self.game_state.world.players[p_num].angle()
     }
-}
 
-fn int_to_bool(i: i32) -> bool {
-    i != 0
+    pub fn get_player_num(&mut self) -> usize {
+      self.game_state.world.get_player_num()
+    }
 }
