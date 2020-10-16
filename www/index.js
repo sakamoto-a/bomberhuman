@@ -14,10 +14,22 @@ const resources = () => {
   let res = {
     player0: document.createElement('img'),
     player1: document.createElement('img'),
+    bomb: document.createElement('img'),
+    fire: document.createElement('img'),
   }
 
-  res.player0.src = "/image/1p.png";
-  res.player1.src = "/image/1s.png";
+  res.player0.width = 100;
+  res.player0.height = 130;
+  res.player0.src = "/image/0p.gif";
+  res.player1.width = 100;
+  res.player1.height = 130;
+  res.player1.src = "/image/8s.gif";
+  res.bomb.width = 100;
+  res.bomb.height = 130;
+  res.bomb.src = "/image/1p.gif";
+  res.fire.width = 100;
+  res.fire.height = 130;
+  res.fire.src = "/image/0s.gif";
 
   return res;
 }
@@ -29,15 +41,18 @@ let clear_screen = () => {
 
 function draw_player(x, y, angle, player_id) {
   ctx.translate(x, y);
-  ctx.translate(50,65);
-  ctx.rotate(angle);
-  ctx.translate(-50,-65);
   switch(player_id) {
     case 0:
-      ctx.drawImage(res.player0, 0, 0, 100, 130);
+      ctx.translate(res.player0.width/2,res.player0.height/2);
+      ctx.rotate(angle);
+      ctx.translate(-res.player0.width/2,-res.player0.height/2);
+      ctx.drawImage(res.player0, 0, 0, res.player0.width, res.player0.height);
       break;
     case 1:
-      ctx.drawImage(res.player1, 0, 0, 100, 130);
+      ctx.translate(res.player1.width/2,res.player1.height/2);
+      ctx.rotate(angle);
+      ctx.translate(-res.player1.width/2,-res.player1.height/2);
+      ctx.drawImage(res.player1, 0, 0, res.player1.width, res.player1.height);
       break;
     default:
       break;
@@ -47,6 +62,17 @@ function draw_player(x, y, angle, player_id) {
   ctx.fillStyle = "black";
 }
 
+function draw_bomb(x, y) {
+  ctx.drawImage(res.bomb, x, y, res.bomb.width, res.bomb.height);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.fillStyle = "black";
+}
+
+function draw_fire(x, y) {
+  ctx.drawImage(res.fire, x, y, res.fire.width, res.fire.height);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.fillStyle = "black";
+}
 let res = resources();
 
 let animationId = null;
@@ -68,15 +94,34 @@ let drawAndUpdate = (timestamp) => {
   game_data.update(progress);
   clear_screen();
   let player_num = game_data.get_player_num();
-  var x = [];
-  var y = [];
+  var p_x = [];
+  var p_y = [];
   var angle = [];
   for(let i=0; i<player_num; i++) {
-    x[i] = game_data.x(i);
-    y[i] = game_data.y(i);
+    p_x[i] = game_data.p_x(i);
+    p_y[i] = game_data.p_y(i);
     angle[i] = game_data.angle(i);
-    draw_player(x[i], y[i], angle[i], i);
+    draw_player(p_x[i], p_y[i], angle[i], i);
   }
+
+  let bomb_num = game_data.get_bomb_num();
+  var b_x = [];
+  var b_y = [];
+  for(let i=0; i<bomb_num; i++) {
+    b_x[i] = game_data.b_x(i);
+    b_y[i] = game_data.b_y(i);
+    draw_bomb(b_x[i], b_y[i]);
+  }
+
+  let fire_num = game_data.get_fire_num();
+  var f_x = [];
+  var f_y = [];
+  for(let i=0; i<fire_num; i++) {
+    f_x[i] = game_data.f_x(i);
+    f_y[i] = game_data.f_y(i);
+    draw_fire(f_x[i], f_y[i]);
+  }
+
 
   prevTimestamp = timestamp;
   requestAnimationFrame(drawAndUpdate);
@@ -100,6 +145,9 @@ const processKey = (key, f) => {
     case "ArrowDown":
       game_data.buttons("down", f);
       break;
+    case "l":
+      game_data.buttons("l", f);
+      break;
     case "w":
       game_data.buttons("w", f);
       break;
@@ -111,6 +159,9 @@ const processKey = (key, f) => {
       break;
     case "d":
       game_data.buttons("d", f);
+      break;
+    case "x":
+      game_data.buttons("x", f);
       break;
   }
 }

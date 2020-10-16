@@ -70,6 +70,14 @@ impl GameData {
                 self.buttons.button.retain(|&x| x != "right");
               }
             },
+            "l" => {
+              if flag == 1 {
+                self.buttons.button.retain(|&x| x != "l");
+                self.buttons.button.push("l");
+              } else {
+                self.buttons.button.retain(|&x| x != "l");
+              }
+            },
             "w" => {
               if flag == 1 {
                 self.buttons.button.retain(|&x| x != "w");
@@ -102,15 +110,39 @@ impl GameData {
                 self.buttons.button.retain(|&x| x != "d");
               }
             },
+            "x" => {
+              if flag == 1 {
+                self.buttons.button.retain(|&x| x != "x");
+                self.buttons.button.push("x");
+              } else {
+                self.buttons.button.retain(|&x| x != "x");
+              }
+            },
             _ => (),
         }
     }
-    pub fn x(&mut self, p_num: usize) -> f64 {
+    pub fn p_x(&mut self, p_num: usize) -> f64 {
         *self.game_state.world.players[p_num].x()
     }
 
-    pub fn y(&mut self, p_num: usize) -> f64 {
+    pub fn p_y(&mut self, p_num: usize) -> f64 {
         *self.game_state.world.players[p_num].y()
+    }
+    
+    pub fn b_x(&mut self, p_num: usize) -> f64 {
+        *self.game_state.world.bombs[p_num].x()
+    }
+
+    pub fn b_y(&mut self, p_num: usize) -> f64 {
+        *self.game_state.world.bombs[p_num].y()
+    }
+    
+    pub fn f_x(&mut self, p_num: usize) -> f64 {
+        *self.game_state.world.fires[p_num].x()
+    }
+
+    pub fn f_y(&mut self, p_num: usize) -> f64 {
+        *self.game_state.world.fires[p_num].y()
     }
 
     pub fn angle(&mut self, p_num: usize) -> f64 {
@@ -119,5 +151,11 @@ impl GameData {
 
     pub fn get_player_num(&mut self) -> usize {
       self.game_state.world.get_player_num()
+    }
+    pub fn get_bomb_num(&mut self) -> usize {
+      self.game_state.world.get_bomb_num()
+    }
+    pub fn get_fire_num(&mut self) -> usize {
+      self.game_state.world.get_fire_num()
     }
 }
