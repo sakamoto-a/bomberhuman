@@ -17,6 +17,21 @@ impl Point {
         Point { x: x, y: y }
     }
 
+    pub fn set_field_point(&mut self) {
+        if (self.x%50.0 > 25.0) {
+            self.x = (self.x as i32 / 50 * 50  + 50) as f64;
+        }
+        else {
+            self.x = (self.x as i32 / 50 * 50) as f64;
+        }
+        if (self.y%50.0 > 25.0) {
+            self.y = (self.y as i32 / 50 * 50  + 50) as f64;
+        }
+        else {
+            self.y = (self.y as i32 / 50 * 50) as f64;
+        }
+    }
+
     /// Returns a random `Point` within the given bounds (exclusive)
     pub fn random<R: Rng>(rng: &mut R, bounds: Size) -> Point {
         Point {

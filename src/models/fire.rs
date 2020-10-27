@@ -16,7 +16,7 @@ pub struct Fire {
 
 impl Fire {
     pub fn new(point: Point, direction: i8, firepower:i8, player_id: usize) -> Fire {
-        let size = Size::new(100.0, 130.0);
+        let size = Size::new(50.0, 50.0);
         Fire {
             position: point,
             direction: direction,

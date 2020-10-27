@@ -5,7 +5,7 @@ const game_data = GameData.new();
 canvas.width = game_data.width();
 canvas.height = game_data.height();
 
-var ctx = canvas.getContext("2d");
+let ctx = canvas.getContext("2d");
 ctx.fillStyle = "green";
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -16,20 +16,24 @@ const resources = () => {
     player1: document.createElement('img'),
     bomb: document.createElement('img'),
     fire: document.createElement('img'),
+    block: document.createElement('img'),
   }
 
-  res.player0.width = 100;
-  res.player0.height = 130;
+  res.player0.width = 50;
+  res.player0.height = 50;
   res.player0.src = "/image/0p.gif";
-  res.player1.width = 100;
-  res.player1.height = 130;
+  res.player1.width = 50;
+  res.player1.height = 50;
   res.player1.src = "/image/8s.gif";
-  res.bomb.width = 100;
-  res.bomb.height = 130;
+  res.bomb.width = 50;
+  res.bomb.height = 50;
   res.bomb.src = "/image/1p.gif";
-  res.fire.width = 100;
-  res.fire.height = 130;
+  res.fire.width = 50;
+  res.fire.height = 50;
   res.fire.src = "/image/0s.gif";
+  res.block.width = 50;
+  res.block.height = 50;
+  res.block.src = "/image/block.png";
 
   return res;
 }
@@ -62,6 +66,7 @@ function draw_player(x, y, angle, player_id) {
   ctx.fillStyle = "black";
 }
 
+
 function draw_bomb(x, y) {
   ctx.drawImage(res.bomb, x, y, res.bomb.width, res.bomb.height);
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -73,6 +78,13 @@ function draw_fire(x, y) {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.fillStyle = "black";
 }
+
+function draw_block(x, y) {
+  ctx.drawImage(res.block, x, y, res.block.width, res.block.height);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.fillStyle = "black";
+}
+
 let res = resources();
 
 let animationId = null;
@@ -98,8 +110,8 @@ let drawAndUpdate = (timestamp) => {
   var p_y = [];
   var angle = [];
   for(let i=0; i<player_num; i++) {
-    p_x[i] = game_data.p_x(i);
-    p_y[i] = game_data.p_y(i);
+    p_x[i] = game_data.x(i, "player");
+    p_y[i] = game_data.y(i, "player");
     angle[i] = game_data.angle(i);
     draw_player(p_x[i], p_y[i], angle[i], i);
   }
@@ -108,8 +120,8 @@ let drawAndUpdate = (timestamp) => {
   var b_x = [];
   var b_y = [];
   for(let i=0; i<bomb_num; i++) {
-    b_x[i] = game_data.b_x(i);
-    b_y[i] = game_data.b_y(i);
+    b_x[i] = game_data.x(i, "bomb");
+    b_y[i] = game_data.y(i, "bomb");
     draw_bomb(b_x[i], b_y[i]);
   }
 
@@ -117,9 +129,18 @@ let drawAndUpdate = (timestamp) => {
   var f_x = [];
   var f_y = [];
   for(let i=0; i<fire_num; i++) {
-    f_x[i] = game_data.f_x(i);
-    f_y[i] = game_data.f_y(i);
+    f_x[i] = game_data.x(i, "fire");
+    f_y[i] = game_data.y(i, "fire");
     draw_fire(f_x[i], f_y[i]);
+  }
+
+  let block_num = game_data.get_block_num();
+  var bl_x = [];
+  var bl_y = [];
+  for(let i=0; i<block_num; i++) {
+    bl_x[i] = game_data.x(i, "block");
+    bl_y[i] = game_data.y(i, "block");
+    draw_block(bl_x[i], bl_y[i]);
   }
 
 
@@ -166,7 +187,9 @@ const processKey = (key, f) => {
   }
 }
 
+
 document.addEventListener('keydown', e => processKey(e.key, 1));
 document.addEventListener('keyup', e => processKey(e.key, 0));
 
 play();
+

@@ -12,23 +12,25 @@ pub struct Bomb {
 }
 
 impl Bomb {
-    pub fn new(point: Point, firepower: i8, player_id: usize) -> Bomb {
-      let size = Size::new(100.0, 130.0);
-        Bomb {
-            position: point,
-            firepower: firepower,
-            life: 3.0,
-            player_id: player_id,
-            size: size,
-        }
+    pub fn new(mut point: Point, firepower: i8, player_id: usize) -> Bomb {
+        let size = Size::new(50.0, 50.0);
+        point.set_field_point();
+            Bomb {
+                position: point,
+                firepower: firepower,
+                life: 3.0,
+                player_id: player_id,
+                size: size,
+            }
     }
 
     pub fn update(&mut self, dt: &f64, events: &mut Vec<Events>) {
-       self.life -= dt;
-       if self.life < 0.0 {
-         self.remove(events);
-         events.push(Events::new("fn", self.position, 0, self.firepower, self.player_id));
-       }
+        self.life -= dt;
+        if self.life < 0.0 {
+            self.remove(events);
+            events.push(Events::new("fn", self.position, 0, self.firepower, self.player_id));
+
+        }
     }
 
     pub fn position(&self) -> Point {

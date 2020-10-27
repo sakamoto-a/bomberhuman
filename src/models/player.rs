@@ -12,7 +12,7 @@ pub struct Player {
     bomb_num: i8,
     firepower: i8,
     player_id: usize,
-    }
+}
 
 impl Player {
     pub fn new(point: Point, speed: f64, direction: f64, actions: Actions, player_id: usize) -> Player {
@@ -28,10 +28,13 @@ impl Player {
     }
 
     pub fn update(&mut self, dt: &f64, buttons: &Buttons, events: &mut Vec<Events>) {
+        //let mut field: Vec<i32> = *self.get_field();
+        //field[0] = 0;
+
         for button in &buttons.button {
           if button == &self.actions.move_up {
-              *self.y() -= dt * self.speed;
-              *self.angle() = PI * 3.0 / 2.0;
+            *self.y() -= dt * self.speed;
+            *self.angle() = PI * 3.0 / 2.0;
           }
           if button == &self.actions.move_down {
             *self.y() += dt * self.speed;
@@ -52,6 +55,10 @@ impl Player {
           }
        }
     }
+
+    //pub fn get_field(&mut self) -> Vec<i32> {
+    //    &mut self.field
+    //}
 
     pub fn x(&mut self) -> &mut f64{
         &mut self.position.x

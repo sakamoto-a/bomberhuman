@@ -1,22 +1,49 @@
 use crate::models::Player;
 use crate::models::Bomb;
 use crate::models::Fire;
+use crate::models::Block;
 use crate::geometory::Point;
 use crate::geometory::Size;
 use crate::controller::Actions;
 use crate::controller::Buttons;
 use crate::controller::Events;
 
+
 pub struct World {
+    pub blocks: Vec<Block>,
     pub players: Vec<Player>,
     pub bombs: Vec<Bomb>,
     pub fires: Vec<Fire>,
     pub events: Vec<Events>,
+    pub field: Vec<i32>,
     pub size: Size,
 }
 
 impl World {
     pub fn new(size: Size) -> World {
+        let mut blocks: Vec<Block> = Vec::new();
+        let field: Vec<i32> = vec![
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        ];
+        for i in 0..13 {
+            for j in 0..15 {
+                if field[i*15+j] == 1 {
+                    blocks.push(Block::new(Point::new((j*50) as f64, (i*50) as f64)))
+                }
+            }
+        }
         let mut players: Vec<Player> = Vec::new();
         let bombs: Vec<Bomb> = Vec::new();
         let fires: Vec<Fire> = Vec::new();
@@ -24,11 +51,11 @@ impl World {
         for n in 0..2 {
             match n {
                 0 => {
-                    let point = Point::new(0.0, 0.0);
+                    let point = Point::new(50.0, 50.0);
                     players.push(Player::new(point, 150.0, 0.0, Actions::new("up", "down", "left", "right", "l"), 0));
                 },
                 1 => {
-                    let point = Point::new(500.0, 300.0);
+                    let point = Point::new(550.0, 350.0);
                     players.push(Player::new(point, 150.0, 0.0, Actions::new("w", "s", "a", "d", "x"), 1));
                 },
                 _ => (),
@@ -38,7 +65,9 @@ impl World {
             players: players,
             bombs: bombs,
             fires: fires,
+            blocks: blocks,
             events: events,
+            field: field,
             size: size,
         }
     }
@@ -91,9 +120,13 @@ impl World {
     pub fn get_bomb_num(&mut self) -> usize {
         self.bombs.len()
     }
-    
+
     pub fn get_fire_num(&mut self) -> usize {
         self.fires.len()
+    }
+
+    pub fn get_block_num(&mut self) -> usize {
+        self.blocks.len()
     }
 
     pub fn push_bomb(&mut self, bomb: Bomb) {
@@ -120,5 +153,9 @@ impl World {
         }
       }
       return false;
+    }
+
+    pub fn collisions() {
+        
     }
 }
