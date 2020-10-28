@@ -21,7 +21,7 @@ impl Fire {
             position: point,
             direction: direction,
             firepower: firepower,
-            life: 1.0,
+            life: 0.3,
             size: size,
             flag: true,
             player_id: player_id,

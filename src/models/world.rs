@@ -17,6 +17,7 @@ pub struct World {
     pub events: Vec<Events>,
     pub field: Vec<i32>,
     pub size: Size,
+    pub end: bool,
 }
 
 impl World {
@@ -69,6 +70,7 @@ impl World {
             events: events,
             field: field,
             size: size,
+            end: false,
         }
     }
 
@@ -82,11 +84,44 @@ impl World {
         for fire in &mut self.fires {
             fire.update(&dt,&mut self.events);
         }
+        for player in &mut self.players {
+          if World::is_dead(player, &mut self.fires) {
+            player.dead(&mut self.events);
+          }
+        }
         for event in &mut self.events {
             match event.event {
+              "pm" => {
+                if World::can_move_block(event.position, &mut self.blocks, self.players[event.player_id].size) {
+                  if World::can_move_bomb(event.position, &mut self.bombs, self.players[event.player_id].size, event.player_id) {
+                    self.players[event.player_id].position_move(event.position);
+                  }
+                }
+                for bomb in &mut self.bombs {
+                  if bomb.over_players.len() != 0 {
+                    for player_id in 0..self.players.len() {
+                      if World::is_over_bomb(self.players[player_id].position, bomb.position, bomb.size) == false {
+                        bomb.remove_over_player(player_id);
+//                        bomb.over_players.retain(|x| *x != *player_id);
+                      }
+                    }
+                  }
+                }
+
+              },
               "bn" => {
                 if World::can_put_bomb(&mut self.bombs, event.position) {
-                  self.bombs.push(Bomb::new(event.position, event.firepower, event.player_id));
+                  let mut over_players: Vec<usize> = Vec::new();
+                  for player in &self.players {
+                    if player.player_id == event.player_id {
+                      over_players.push(event.player_id);
+                    } else {
+                      if World::is_over_bomb(player.position, event.position, Size::new(50.0,50.0)) {
+                        over_players.push(player.player_id);
+                      }
+                    }
+                  }
+                  self.bombs.push(Bomb::new(event.position, event.firepower, event.player_id, over_players));
                   self.players[event.player_id].sub_bomb_num();
                 }
               },
@@ -94,7 +129,9 @@ impl World {
                 self.bombs.retain(|x| x.life > 0.0);
               },
               "fn" => {
-                self.fires.push(Fire::new(event.position, event.direction, event.firepower, event.player_id));
+                if World::can_fire(event.position, &mut self.blocks, Size::new(50.0,50.0)) {
+                  self.fires.push(Fire::new(event.position, event.direction, event.firepower, event.player_id));
+                }
               },
               "fr" => {
                 self.fires.remove(0);
@@ -110,6 +147,17 @@ impl World {
             bomb.life = 0.0;
           }
         }
+
+        let mut count: usize = 0;
+        for player in &mut self.players {
+          if player.dead == false {
+            count += 1;
+          }
+        }
+        if count <= 1 {
+          self.end = true;
+        }
+
         self.events.clear();
     }
 
@@ -136,7 +184,7 @@ impl World {
     pub fn push_fire(&mut self, fire: Fire) {
         self.fires.push(fire);
     }
-
+//colision
     pub fn can_put_bomb(bombs: &mut Vec<Bomb>,position: Point) -> bool{
       for bomb in bombs {
         if bomb.position.x - position.x < bomb.size.width && position.x - bomb.position.x < bomb.size.width && bomb.position.y - position.y < bomb.size.height && position.y - bomb.position.y < bomb.size.height {
@@ -155,7 +203,59 @@ impl World {
       return false;
     }
 
-    pub fn collisions() {
-        
+    pub fn is_dead(player: &mut Player, fires: &mut Vec<Fire>) -> bool{
+      for fire in fires {
+        if player.position.x - fire.position.x < (player.size.width + fire.size.width)/2.0 && fire.position.x - player.position.x < (player.size.width + fire.size.width)/2.0 && player.position.y - fire.position.y < (player.size.height + fire.size.height)/2.0 && fire.position.y - player.position.y < (player.size.height + fire.size.height)/2.0 {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    pub fn can_move_block(position: Point, blocks: &mut Vec<Block>, size: Size) -> bool{
+      let offset: f64 = 10.0;
+      for block in blocks {
+        if position.x - block.position.x < (size.width + block.size.width-offset)/2.0 && block.position.x - position.x < (size.width + block.size.width-offset)/2.0 && position.y - block.position.y < (size.height + block.size.height-offset)/2.0 && block.position.y - position.y < (size.height + block.size.height-offset)/2.0 {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    pub fn can_fire(position: Point, blocks: &mut Vec<Block>, size: Size) -> bool{
+      let offset: f64 = 10.0;
+      for block in blocks {
+        if position.x - block.position.x < (size.width + block.size.width-offset)/2.0 && block.position.x - position.x < (size.width + block.size.width-offset)/2.0 && position.y - block.position.y < (size.height + block.size.height-offset)/2.0 && block.position.y - position.y < (size.height + block.size.height-offset)/2.0 {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    pub fn can_move_bomb(position: Point, bombs: &mut Vec<Bomb>, size: Size, player_id: usize) -> bool{
+      let offset: f64 = 10.0;
+      let mut flag: bool;
+      for bomb in bombs {
+        flag = true;
+        for over_player in &bomb.over_players {
+          if *over_player == player_id {
+            flag = false;
+          }
+        }
+        if flag {
+          if position.x - bomb.position.x < (size.width + bomb.size.width-offset)/2.0 && bomb.position.x - position.x < (size.width + bomb.size.width-offset)/2.0 && position.y - bomb.position.y < (size.height + bomb.size.height-offset)/2.0 && bomb.position.y - position.y < (size.height + bomb.size.height-offset)/2.0 {
+          return false;
+          }
+        }
+      }
+      return true;
+    }
+
+    pub fn is_over_bomb(position: Point, bomb_position: Point, size:Size) -> bool {
+      let offset: f64 = 10.0;
+      if position.x - bomb_position.x < (size.width + size.width-offset)/2.0 && bomb_position.x - position.x < (size.width + size.width-offset)/2.0 && position.y - bomb_position.y < (size.height + size.height-offset)/2.0 && bomb_position.y - position.y < (size.height + size.height-offset)/2.0 {
+        return true;
+      }
+      return false;
     }
 }

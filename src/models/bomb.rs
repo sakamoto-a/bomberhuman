@@ -9,10 +9,11 @@ pub struct Bomb {
     pub life: f64,
     player_id: usize,
     pub size: Size,
+    pub over_players: Vec<usize>,
 }
 
 impl Bomb {
-    pub fn new(mut point: Point, firepower: i8, player_id: usize) -> Bomb {
+    pub fn new(mut point: Point, firepower: i8, player_id: usize, over_players: Vec<usize>) -> Bomb {
         let size = Size::new(50.0, 50.0);
         point.set_field_point();
             Bomb {
@@ -21,6 +22,7 @@ impl Bomb {
                 life: 3.0,
                 player_id: player_id,
                 size: size,
+                over_players: over_players,
             }
     }
 
@@ -48,5 +50,7 @@ impl Bomb {
     pub fn y(&mut self) -> &mut f64{
         &mut self.position.y
     }
-
+    pub fn remove_over_player(&mut self, player_id: usize) {
+      self.over_players.retain(|x| *x != player_id);
+    }
 }

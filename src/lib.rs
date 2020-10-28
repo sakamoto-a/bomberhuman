@@ -182,13 +182,8 @@ impl GameData {
     pub fn get_block_num(&mut self) -> usize {
         self.game_state.world.get_block_num()
     }
-}
 
-//fn test (game_data: &mut GameData, key: &str, flag: i32) {
-//    if flag == 1 {
-//        game_data.buttons.button.retain(|&x| x != key);
-//        game_data.buttons.button.push(key);
-//    } else {
-//        game_data.buttons.button.retain(|&x| x != key);
-//    }
-//}
+    pub fn is_end(&mut self) -> bool {
+      self.game_state.world.end 
+    }
+}

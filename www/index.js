@@ -21,10 +21,10 @@ const resources = () => {
 
   res.player0.width = 50;
   res.player0.height = 50;
-  res.player0.src = "/image/0p.gif";
+  res.player0.src = "/image/human.png";
   res.player1.width = 50;
   res.player1.height = 50;
-  res.player1.src = "/image/8s.gif";
+  res.player1.src = "/image/human.png";
   res.bomb.width = 50;
   res.bomb.height = 50;
   res.bomb.src = "/image/1p.gif";
@@ -33,7 +33,7 @@ const resources = () => {
   res.fire.src = "/image/0s.gif";
   res.block.width = 50;
   res.block.height = 50;
-  res.block.src = "/image/block.png";
+  res.block.src = "/image/8s.gif";
 
   return res;
 }
@@ -101,6 +101,11 @@ let drawAndUpdate = (timestamp) => {
     return;
   }
 
+  if (game_data.is_end()) {
+    alert("Game End");
+   // break;
+  }
+
   // Update and draw
   let progress = (timestamp - prevTimestamp) / 1000;
   game_data.update(progress);
@@ -113,7 +118,9 @@ let drawAndUpdate = (timestamp) => {
     p_x[i] = game_data.x(i, "player");
     p_y[i] = game_data.y(i, "player");
     angle[i] = game_data.angle(i);
-    draw_player(p_x[i], p_y[i], angle[i], i);
+    if (p_x[i] >= 0) {
+      draw_player(p_x[i], p_y[i], angle[i], i);
+    }
   }
 
   let bomb_num = game_data.get_bomb_num();

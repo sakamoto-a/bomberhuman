@@ -8,7 +8,7 @@ pub struct Block {
 
 impl Block {
     pub fn new(point: Point) -> Block {
-      let size = Size::new(100.0, 100.0);
+      let size = Size::new(50.0, 50.0);
         Block {
             position: point,
             size: size,
