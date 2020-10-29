@@ -2,8 +2,8 @@ import { GameData } from "bomberhuman";
 
 const canvas = document.getElementById("bomberhuman-canvas");
 const game_data = GameData.new();
-canvas.width = game_data.width();
-canvas.height = game_data.height();
+canvas.width = 1200; //game_data.width();
+canvas.height = 1000; //game_data.height();
 
 let ctx = canvas.getContext("2d");
 ctx.fillStyle = "green";
@@ -57,7 +57,7 @@ const resources = () => {
   res.block.src = "/image/block.jpg";
   res.softblock.width = 50;
   res.softblock.height = 50;
-  res.softblock.src = "/image/8s.gif";
+  res.softblock.src = "/image/soft_block.png";
 
   return res;
 }
@@ -65,6 +65,18 @@ const resources = () => {
 let clear_screen = () => {
   ctx.fillStyle = "green";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+
+let result_menu_screen = () => {
+  ctx.lineWidth = 2;
+  ctx.fillStyle = "black";
+  ctx.font = "100px cursive";
+  ctx.textBaseline = 'center';
+	ctx.textAlign = 'center';
+  let x = canvas.width / 2
+  let y = canvas.height / 4
+  ctx.fillText("END", x, y);
 }
 
 function draw_player(x, y, angle, player_id) {
@@ -160,26 +172,15 @@ let drawAndUpdate = (timestamp) => {
   }
 
   if (game_data.is_end()) {
-    alert("Game End");
-   // break;
+    result_menu_screen();
+    //alert("Game End");
+    return;
   }
 
   // Update and draw
   let progress = (timestamp - prevTimestamp) / 1000;
   game_data.update(progress);
   clear_screen();
-  let player_num = game_data.get_player_num();
-  var p_x = [];
-  var p_y = [];
-  var angle = [];
-  for(let i=0; i<player_num; i++) {
-    p_x[i] = game_data.x(i, "player");
-    p_y[i] = game_data.y(i, "player");
-    angle[i] = game_data.angle(i);
-    if (p_x[i] >= 0) {
-      draw_player(p_x[i], p_y[i], angle[i], i);
-    }
-  }
 
   let bomb_num = game_data.get_bomb_num();
   var b_x = [];
@@ -226,6 +227,19 @@ let drawAndUpdate = (timestamp) => {
     sbl_x[i] = game_data.x(i, "softblock");
     sbl_y[i] = game_data.y(i, "softblock");
     draw_softblock(sbl_x[i], sbl_y[i]);
+  }
+
+  let player_num = game_data.get_player_num();
+  var p_x = [];
+  var p_y = [];
+  var angle = [];
+  for(let i=0; i<player_num; i++) {
+    p_x[i] = game_data.x(i, "player");
+    p_y[i] = game_data.y(i, "player");
+    angle[i] = game_data.angle(i);
+    if (p_x[i] >= 0) {
+      draw_player(p_x[i], p_y[i], angle[i], i);
+    }
   }
 
   prevTimestamp = timestamp;

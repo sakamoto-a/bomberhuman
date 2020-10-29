@@ -289,6 +289,6 @@ impl GameData {
     }
 
     pub fn is_end(&mut self) -> bool {
-      self.game_state.world.end 
+      self.game_state.world.end
     }
 }
