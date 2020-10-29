@@ -2,8 +2,8 @@ import { GameData } from "bomberhuman";
 
 const canvas = document.getElementById("bomberhuman-canvas");
 const game_data = GameData.new();
-canvas.width = 1200; //game_data.width();
-canvas.height = 1000; //game_data.height();
+canvas.width = 800; //game_data.width();
+canvas.height = 700; //game_data.height();
 
 let ctx = canvas.getContext("2d");
 ctx.fillStyle = "green";
