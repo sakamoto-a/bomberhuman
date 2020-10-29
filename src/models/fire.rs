@@ -29,7 +29,7 @@ impl Fire {
     }
 
     pub fn update(&mut self, dt: &f64, events: &mut Vec<Events>) {
-      if self.flag && self.firepower > 1 {
+      if self.flag && self.firepower > 0 {
         let mut new_position = Point::new(0.0, 0.0);
         match self.direction {
           0 => {

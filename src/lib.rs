@@ -74,12 +74,12 @@ impl GameData {
                     self.buttons.button.retain(|&x| x != "right");
                 }
             },
-            "l" => {
+            "/" => {
                 if flag == 1 {
-                    self.buttons.button.retain(|&x| x != "l");
-                    self.buttons.button.push("l");
+                    self.buttons.button.retain(|&x| x != "/");
+                    self.buttons.button.push("/");
                 } else {
-                    self.buttons.button.retain(|&x| x != "l");
+                    self.buttons.button.retain(|&x| x != "/");
                 }
             },
             "w" => {
@@ -122,6 +122,86 @@ impl GameData {
                     self.buttons.button.retain(|&x| x != "x");
                 }
             },
+            "t" => {
+                if flag == 1 {
+                    self.buttons.button.retain(|&x| x != "t");
+                    self.buttons.button.push("t");
+                } else {
+                    self.buttons.button.retain(|&x| x != "t");
+                }
+            },
+            "g" => {
+                if flag == 1 {
+                    self.buttons.button.retain(|&x| x != "g");
+                    self.buttons.button.push("g");
+                } else {
+                    self.buttons.button.retain(|&x| x != "g");
+                }
+            },
+            "f" => {
+                if flag == 1 {
+                    self.buttons.button.retain(|&x| x != "f");
+                    self.buttons.button.push("f");
+                } else {
+                    self.buttons.button.retain(|&x| x != "f");
+                }
+            },
+            "h" => {
+                if flag == 1 {
+                    self.buttons.button.retain(|&x| x != "h");
+                    self.buttons.button.push("h");
+                } else {
+                    self.buttons.button.retain(|&x| x != "h");
+                }
+            },
+            "b" => {
+                if flag == 1 {
+                    self.buttons.button.retain(|&x| x != "b");
+                    self.buttons.button.push("b");
+                } else {
+                    self.buttons.button.retain(|&x| x != "b");
+                }
+            },
+            "i" => {
+                if flag == 1 {
+                    self.buttons.button.retain(|&x| x != "i");
+                    self.buttons.button.push("i");
+                } else {
+                    self.buttons.button.retain(|&x| x != "i");
+                }
+            },
+            "k" => {
+                if flag == 1 {
+                    self.buttons.button.retain(|&x| x != "k");
+                    self.buttons.button.push("k");
+                } else {
+                    self.buttons.button.retain(|&x| x != "k");
+                }
+            },
+            "j" => {
+                if flag == 1 {
+                    self.buttons.button.retain(|&x| x != "j");
+                    self.buttons.button.push("j");
+                } else {
+                    self.buttons.button.retain(|&x| x != "j");
+                }
+            },
+            "l" => {
+                if flag == 1 {
+                    self.buttons.button.retain(|&x| x != "l");
+                    self.buttons.button.push("l");
+                } else {
+                    self.buttons.button.retain(|&x| x != "l");
+                }
+            },
+            "," => {
+                if flag == 1 {
+                    self.buttons.button.retain(|&x| x != ",");
+                    self.buttons.button.push(",");
+                } else {
+                    self.buttons.button.retain(|&x| x != ",");
+                }
+            },
             _ => (),
         }
     }
@@ -137,8 +217,14 @@ impl GameData {
             "fire" => {
                 *self.game_state.world.fires[num].x()
             },
+            "item" => {
+                *self.game_state.world.items[num].x()
+            }
             "block" => {
                 *self.game_state.world.blocks[num].x()
+            }
+            "softblock" => {
+                *self.game_state.world.softblocks[num].x()
             }
             _ => 0.0,
         }
@@ -155,13 +241,24 @@ impl GameData {
             "fire" => {
                 *self.game_state.world.fires[num].y()
             },
+            "item" => {
+                *self.game_state.world.items[num].y()
+            },
             "block" => {
                 *self.game_state.world.blocks[num].y()
+            },
+            "softblock" => {
+                *self.game_state.world.softblocks[num].y()
             },
 
             _ => 0.0,
         }
     }
+
+    pub fn item_type(&mut self, num:usize, char_name: &str) -> usize {
+       self.game_state.world.items[num].get_item_type()
+    }
+
 
     pub fn angle(&mut self, p_num: usize) -> f64 {
         *self.game_state.world.players[p_num].angle()
@@ -179,8 +276,16 @@ impl GameData {
         self.game_state.world.get_fire_num()
     }
 
+    pub fn get_item_num(&mut self) -> usize {
+        self.game_state.world.get_item_num()
+    }
+
     pub fn get_block_num(&mut self) -> usize {
         self.game_state.world.get_block_num()
+    }
+
+    pub fn get_softblock_num(&mut self) -> usize {
+        self.game_state.world.get_softblock_num()
     }
 
     pub fn is_end(&mut self) -> bool {
