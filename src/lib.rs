@@ -74,12 +74,12 @@ impl GameData {
                     self.buttons.button.retain(|&x| x != "right");
                 }
             },
-            "/" => {
+            "space" => {
                 if flag == 1 {
-                    self.buttons.button.retain(|&x| x != "/");
-                    self.buttons.button.push("/");
+                    self.buttons.button.retain(|&x| x != "space");
+                    self.buttons.button.push("space");
                 } else {
-                    self.buttons.button.retain(|&x| x != "/");
+                    self.buttons.button.retain(|&x| x != "space");
                 }
             },
             "w" => {
