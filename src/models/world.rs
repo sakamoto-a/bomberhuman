@@ -4,6 +4,7 @@ use crate::models::Fire;
 use crate::models::Item;
 use crate::models::Block;
 use crate::models::Softblock;
+use crate::models::Collision;
 use crate::geometory::Point;
 use crate::geometory::Size;
 use crate::controller::Actions;
@@ -22,6 +23,9 @@ pub struct World {
     pub field: Vec<i32>,
     pub size: Size,
     pub end: bool,
+    pub life: f64,
+    pub next_bomb_time: f64,
+    pub hurry_up: Vec<i32>,
 }
 
 impl World {
@@ -44,8 +48,8 @@ impl World {
             1, 2, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 2, 1,
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         ];
-        let mut item_set = vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        let mut item_set = vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                              0, 0, 0, 0, 0, 0, 0, 0,
                               3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
                               3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
                               3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
@@ -53,6 +57,7 @@ impl World {
                               7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
                               11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,
                               15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
+                              19, 19, 19, 23, 23, 23,
                               ];
         let mut n:usize = 0;
         let mut rng = rand::thread_rng();
@@ -69,16 +74,10 @@ impl World {
                     blocks.push(Block::new(Point::new((j*50) as f64, (i*50) as f64)))
                 }
                 if field[i*15+j]%4 == 3 {
-                    softblocks.push(Softblock::new(Point::new((j*50) as f64, (i*50) as f64)))
-                }
-                if field[i*15+j] == 7 {
-                    items.push(Item::new(Point::new((j*50) as f64, (i*50) as f64), 1))
-                }
-                if field[i*15+j] == 11 {
-                    items.push(Item::new(Point::new((j*50) as f64, (i*50) as f64), 2))
-                }
-                if field[i*15+j] == 15 {
-                    items.push(Item::new(Point::new((j*50) as f64, (i*50) as f64), 3))
+//                    softblocks.push(Softblock::new(Point::new((j*50) as f64, (i*50) as f64)));
+                    if field[i*15+j]/4 > 0 {
+                     items.push(Item::new(Point::new((j*50) as f64, (i*50) as f64), (field[i*15+j]/4) as usize))
+                    }
                 }
             }
         }
@@ -107,6 +106,19 @@ impl World {
                 _ => (),
             }
         }
+        let hurry_up = vec![
+             97,  95, 110, 111, 112, 113, 114,  99,  84,  83,  82,
+             81,  80,  79, 109, 125, 127, 129, 115,  85,  69,  67,
+             65,  63,  78,  93, 108, 123, 138, 139, 140, 141, 142,
+            143, 144, 145, 146, 131, 116, 101,  86,  71,  56,  55,
+             54,  53,  52,  51,  50,  49,  48,  47,  77, 107, 137,
+            153, 155, 157, 159, 161, 147, 117,  87,  57,  41,  39,
+             37,  35,  33,  31,  46,  61,  76,  91, 106, 121, 136,
+            151, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175,
+            176, 177, 178, 163, 148, 133, 118, 103,  88,  73,  58,
+             43,  28,  27,  26,  25,  24,  23,  22,  21,  20,  19,
+             18,  17,  16,
+             ];
         World {
             players: players,
             bombs: bombs,
@@ -118,10 +130,76 @@ impl World {
             field: field,
             size: size,
             end: false,
+            life: 40.0,
+            next_bomb_time: 0.0,
+            hurry_up: hurry_up,
         }
     }
 
     pub fn update(&mut self, dt: f64, buttons: &Buttons) {
+      self.life -= dt;
+      if self.life < 30.0 {
+        self.next_bomb_time -= dt;
+        if self.next_bomb_time < 0.0 {
+          let mut field = World::mapping(&mut self.players, &mut self.fires, &mut self.bombs, &mut self.items, &mut self.softblocks);
+          let mut n = 0;
+          for i in 0..field.len() {
+            if field[i] == 0 {
+              n += 1;
+            }
+          }
+          let bomb_id;
+          if self.bombs.len() == 0 {
+            bomb_id = 0;
+          } else {
+            bomb_id = self.bombs[self.bombs.len()-1].bomb_id + 1;
+          }
+          if n > 0 {
+            let mut bomb_set = vec![0; n];
+            bomb_set[0] = -10;
+            let mut rng = rand::thread_rng();
+            bomb_set.shuffle(&mut rng);
+            n = 0; 
+            for i in 0..field.len() {
+              if field[i] == 0 {
+                 field[i] = bomb_set[n];
+                n += 1;
+              }
+            }
+            for i in 0..13 {
+                for j in 0..15 {
+                  if field[i*15+j] == -10 {
+                      self.bombs.push(Bomb::new(bomb_id, Point::new((j*50) as f64, (i*50) as f64),4, 20, Vec::new(),1));
+                    }
+                  }
+               }
+              }
+              if self.life > 15.0 {
+                self.next_bomb_time = 0.5;
+              } else {
+                self.next_bomb_time = 0.25;
+              }
+        }
+/*        if self.next_bomb_time < 0.0 {
+          match self.hurry_up.pop() {
+            Some(next) => {
+              let next_x = next % 15;
+              let next_y = next / 15;
+              let block_position = Point::new((next_x*50) as f64, (next_y*50) as f64);
+              for player in &mut self.players {
+                if Collision::is_over_block(player.position, block_position, player.size) {
+                  player.dead();
+                }
+              }
+              self.blocks.push(Block::new(block_position));
+            },
+            None => (),
+          }
+          self.next_bomb_time = 30.0/113.0;
+        }
+*/
+      }
+        
         for item in &mut self.items {
             item.update(&mut self.events);
         }
@@ -138,37 +216,49 @@ impl World {
             softblock.update(&mut self.events);
         }
         for player in &mut self.players {
-          if World::is_dead(player, &mut self.fires) {
-            player.dead(&mut self.events);
+          if Collision::is_dead(player, &mut self.fires) {
+            player.dead();
+            self.events.push(Events::new("pd", player.position, 0, 0, player.player_id, 0));
           }
         }
         for event in &mut self.events {
             match event.event {
               "pm" => {
-                if World::can_move_softblock(event.position, &mut self.softblocks, self.players[event.player_id].size) {
-                  if World::can_move_block(event.position, &mut self.blocks, self.players[event.player_id].size) {
-                    if World::can_move_bomb(event.position, &mut self.bombs, self.players[event.player_id].size, event.player_id) {
+                if Collision::can_move_softblock(event.position, &mut self.softblocks, self.players[event.player_id].size) {
+                  if Collision::can_move_block(event.position, &mut self.blocks, self.players[event.player_id].size) {
+                    if Collision::can_move_bomb(event.position, &mut self.bombs, self.players[event.player_id].size, event.player_id, event.direction, self.players[event.player_id].kick) {
                       self.players[event.player_id].position_move(event.position);
-                      let item_type = World::get_item(event.position, &mut self.items, self.players[event.player_id].size);
+                      let item_type = Collision::get_item(event.position, &mut self.items, self.players[event.player_id].size);
                       match item_type {
                         1 => { 
                          self.players[event.player_id].firepower += 1;
+                         self.players[event.player_id].items.fire_up += 1;
                         },
                         2 => {
                          self.players[event.player_id].bomb_num += 1;
+                         self.players[event.player_id].items.bomb_up += 1;
                         },
                         3 => {
                          self.players[event.player_id].speed += 25.0;
+                         self.players[event.player_id].items.speed_up += 1;
+                        },
+                        4 => {
+                         self.players[event.player_id].kick = true;
+                         self.players[event.player_id].items.kick += 1;
+                        },
+                        5 => {
+                         self.players[event.player_id].bomb_type = 1;
+                         self.players[event.player_id].items.bomb_type += 1;
                         },
                         _ => (),
                       }
                       
-                    }
+                    } 
                   }
                   for bomb in &mut self.bombs {
                     if bomb.over_players.len() != 0 {
                       for player_id in 0..self.players.len() {
-                        if World::is_over_bomb(self.players[player_id].position, bomb.position, bomb.size) == false {
+                        if Collision::is_over_bomb(self.players[player_id].position, bomb.position, bomb.size) == false {
                           bomb.remove_over_player(player_id);
   //                        bomb.over_players.retain(|x| *x != *player_id);
                         }
@@ -177,30 +267,152 @@ impl World {
                   }
                 }
               },
+              "pd" => {
+                let mut field = World::mapping(&mut self.players, &mut self.fires, &mut self.bombs, &mut self.items, &mut self.softblocks);
+                let mut n = 0;
+                for i in 0..field.len() {
+                  if field[i] == 0 {
+                    n += 1;
+                  }
+                }
+                let mut item_set = vec![0; n];
+                let mut fire_item_num = self.players[event.player_id].items.fire_up;
+                let mut bomb_item_num = self.players[event.player_id].items.bomb_up;
+                let mut speed_item_num = self.players[event.player_id].items.speed_up;
+                let mut kick_item_num = self.players[event.player_id].items.kick;
+                let mut bomb_type_item_num = self.players[event.player_id].items.bomb_type;
+                for i in 0..item_set.len() {
+                  if fire_item_num > 0 {
+                    item_set[i] = 4;
+                    fire_item_num -= 1;
+                  } else if bomb_item_num > 0 {
+                    item_set[i] = 8;
+                    bomb_item_num -= 1;
+                  } else if speed_item_num > 0 {
+                    item_set[i] = 12;
+                    speed_item_num -= 1;
+                  } else if kick_item_num > 0 {
+                    item_set[i] = 16;
+                    kick_item_num -= 1;
+                  } else if bomb_type_item_num > 0 {
+                    item_set[i] = 20;
+                    bomb_type_item_num -= 1;
+                  }
+                }
+                n = 0;
+                let mut rng = rand::thread_rng();
+                item_set.shuffle(&mut rng);
+                for i in 0..field.len() {
+                  if field[i] == 0 {
+                     field[i] = item_set[n];
+                    n += 1;
+                  }
+                }
+                for i in 0..13 {
+                    for j in 0..15 {
+                      if field[i*15+j] > 0 {
+                        if field[i*15+j]%4 == 0 {
+                            self.items.push(Item::new(Point::new((j*50) as f64, (i*50) as f64),(field[i*15+j]/4) as usize))
+                        }
+                      }
+                    }
+                }
+              },
               "bn" => {
-                if World::can_put_bomb(&mut self.bombs, event.position) {
+                if Collision::can_put_bomb(&mut self.bombs, event.position) {
                   let mut over_players: Vec<usize> = Vec::new();
                   for player in &self.players {
                     if player.player_id == event.player_id {
                       over_players.push(event.player_id);
                     } else {
-                      if World::is_over_bomb(player.position, event.position, Size::new(50.0,50.0)) {
+                      if Collision::is_over_bomb(player.position, event.position, Size::new(50.0,50.0)) {
                         over_players.push(player.player_id);
                       }
                     }
                   }
-                  self.bombs.push(Bomb::new(event.position, event.firepower, event.player_id, over_players));
+                  let bomb_id;
+                  if self.bombs.len() == 0 {
+                    bomb_id = 0;
+                  } else {
+                    bomb_id = self.bombs[self.bombs.len()-1].bomb_id + 1;
+                  }
+                  self.bombs.push(Bomb::new(bomb_id, event.position, event.firepower, event.player_id, over_players, event.bomb_type));
                   self.players[event.player_id].sub_bomb_num();
+                }
+              },
+              "bm" => {
+                if Collision::can_move_softblock(event.position, &mut self.softblocks, Size::new(50.0,50.0)) {
+                  if Collision::can_move_block(event.position, &mut self.blocks,Size::new(50.0,50.0)) {
+                    if Collision::can_move_bomb_bomb(event.position, &mut self.bombs,Size::new(50.0,50.0), event.player_id) {
+                      if Collision::can_move_bomb_player(event.position, &mut self.players, Size::new(50.0,50.0)) {
+                      let item_type = Collision::get_item(event.position, &mut self.items,Size::new(50.0,50.0) );
+                      if item_type > 0 {
+                        for bomb in &mut self.bombs {
+                          if bomb.bomb_id == event.player_id {
+                            bomb.move_stop();
+                            break;
+                          }
+                        }
+                      } else {
+                        for bomb in &mut self.bombs {
+                          if bomb.bomb_id == event.player_id {
+                            bomb.position_move(event.position);
+                            break;
+                          }
+                        }
+                      }
+                      } else {
+                        for bomb in &mut self.bombs {
+                          if bomb.bomb_id == event.player_id {
+                            bomb.move_stop();
+                            break;
+                          }
+                        }
+                }
+                    } else {
+                        for bomb in &mut self.bombs {
+                          if bomb.bomb_id == event.player_id {
+                            bomb.move_stop();
+                            break;
+                          }
+                        }
+                }
+ 
+                  } else {
+                        for bomb in &mut self.bombs {
+                          if bomb.bomb_id == event.player_id {
+                            bomb.move_stop();
+                            break;
+                          }
+                        }
+                }
+
+                } else {
+                        for bomb in &mut self.bombs {
+                          if bomb.bomb_id == event.player_id {
+                            bomb.move_stop();
+                            break;
+                          }
+                        }
                 }
               },
               "br" => {
                 self.bombs.retain(|x| x.life > 0.0);
               },
               "fn" => {
-                if World::can_fire(event.position, &mut self.blocks, Size::new(50.0,50.0)) {
-                  if World::can_fire_softblock(event.position, &mut self.softblocks, Size::new(50.0,50.0)) {
-                    if World::can_fire_item(event.position, &mut self.items, Size::new(50.0,50.0)) {
-                      self.fires.push(Fire::new(event.position, event.direction, event.firepower, event.player_id));
+                if Collision::can_fire(event.position, &mut self.blocks, Size::new(50.0,50.0)) {
+                  if event.bomb_type == 1 {
+                    if Collision::can_fire_softblock(event.position, &mut self.softblocks, Size::new(50.0,50.0)) {
+                    Collision::can_fire_item(event.position, &mut self.items, Size::new(50.0,50.0));
+                    self.fires.push(Fire::new(event.position, event.direction, event.firepower, event.player_id, event.bomb_type));
+                    } else {
+                      self.fires.push(Fire::new(event.position, event.direction, event.firepower, event.player_id, event.bomb_type));
+                    }
+                    } else {
+                      if Collision::can_fire_softblock(event.position, &mut self.softblocks, Size::new(50.0,50.0)) {
+                        if Collision::can_fire_item(event.position, &mut self.items, Size::new(50.0,50.0)) {
+                          self.fires.push(Fire::new(event.position, event.direction, event.firepower, event.player_id, event.bomb_type));
+                      }
                     }
                   }
                 }
@@ -208,7 +420,9 @@ impl World {
               "fr" => {
                 self.fires.remove(0);
                 if event.direction == 0 {
-                  self.players[event.player_id].add_bomb_num();
+                  if event.player_id < 10 {
+                    self.players[event.player_id].add_bomb_num();
+                  }
                 }
               },
               "sbr" => {
@@ -221,19 +435,22 @@ impl World {
             }
         }
         for bomb in &mut self.bombs {
-          if World::is_explosion(bomb, &mut self.fires) {
+          if Collision::is_explosion(bomb, &mut self.fires) {
             bomb.life = 0.0;
           }
         }
-
         let mut count: usize = 0;
         for player in &mut self.players {
           if player.dead == false {
             count += 1;
           }
         }
-        if count <= 1 {
+        if count <= 0 {
           self.end = true;
+        }
+
+        if self.life <= 0.0 {
+        //  self.end = true;
         }
 
         self.events.clear();
@@ -263,6 +480,26 @@ impl World {
         self.softblocks.len()
     }
 
+    pub fn get_winner(&mut self) -> usize {
+      let mut count = 0;
+      let mut winner = 0;
+        for player in &mut self.players {
+          if player.dead == false {
+            count += 1;
+          }
+        }
+        if count > 1 {
+          winner = 0;
+        } else {
+          for player in &mut self.players {
+            if player.dead == false {
+              winner = player.player_id + 1;
+            }
+          }
+        }
+        winner  
+    }
+
     pub fn push_bomb(&mut self, bomb: Bomb) {
         self.bombs.push(bomb);
     }
@@ -270,123 +507,77 @@ impl World {
     pub fn push_fire(&mut self, fire: Fire) {
         self.fires.push(fire);
     }
-//colision
-    pub fn can_put_bomb(bombs: &mut Vec<Bomb>,position: Point) -> bool{
+
+    pub fn mapping(players: &mut Vec<Player>, fires: &mut Vec<Fire>, bombs: &mut Vec<Bomb>, items: &mut Vec<Item>, softblocks: &mut Vec<Softblock>) -> Vec<i32> {
+      let mut field: Vec<i32> = vec![
+          1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+          1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+          1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+          1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+          1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+          1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1,
+          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+          1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      ];
+      for player in players {
+        if !player.dead {
+          let mut position: Point = player.position;
+          position.set_field_point();
+          field[(position.x/50.0+position.y/50.0*15.0) as usize] = 2;
+          field[(position.x/50.0+position.y/50.0*15.0) as usize + 1] = -1;
+          field[(position.x/50.0+position.y/50.0*15.0) as usize - 1] = -1;
+          field[(position.x/50.0+position.y/50.0*15.0) as usize + 15] = -1;
+          field[(position.x/50.0+position.y/50.0*15.0) as usize - 15] = -1;
+        }
+      }
       for bomb in bombs {
-        if bomb.position.x - position.x < bomb.size.width && position.x - bomb.position.x < bomb.size.width && bomb.position.y - position.y < bomb.size.height && position.y - bomb.position.y < bomb.size.height {
-          return false;
-        }
-      }
-      return true;
-    }
-
-    pub fn is_explosion(bomb: &mut Bomb, fires: &mut Vec<Fire>) -> bool{
-      for fire in fires {
-        if bomb.position.x - fire.position.x < (bomb.size.width + fire.size.width)/2.0 && fire.position.x - bomb.position.x < (bomb.size.width + fire.size.width)/2.0 && bomb.position.y - fire.position.y < (bomb.size.height + fire.size.height)/2.0 && fire.position.y - bomb.position.y < (bomb.size.height + fire.size.height)/2.0 {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    pub fn is_dead(player: &mut Player, fires: &mut Vec<Fire>) -> bool{
-      let offset: f64 = 10.0;
-      for fire in fires {
-        if player.position.x - fire.position.x < (player.size.width + fire.size.width - offset)/2.0 && fire.position.x - player.position.x < (player.size.width + fire.size.width - offset)/2.0 && player.position.y - fire.position.y < (player.size.height + fire.size.height - offset)/2.0 && fire.position.y - player.position.y < (player.size.height + fire.size.height - offset)/2.0 {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    pub fn can_move_block(position: Point, blocks: &mut Vec<Block>, size: Size) -> bool{
-      let offset: f64 = 10.0;
-      for block in blocks {
-        if position.x - block.position.x < (size.width + block.size.width-offset)/2.0 && block.position.x - position.x < (size.width + block.size.width-offset)/2.0 && position.y - block.position.y < (size.height + block.size.height-offset)/2.0 && block.position.y - position.y < (size.height + block.size.height-offset)/2.0 {
-          return false;
-        }
-      }
-      return true;
-    }
-
-    pub fn can_move_softblock(position: Point, softblocks: &mut Vec<Softblock>, size: Size) -> bool{
-      let offset: f64 = 10.0;
-      for softblock in softblocks {
-        if position.x - softblock.position.x < (size.width + softblock.size.width-offset)/2.0 && softblock.position.x - position.x < (size.width + softblock.size.width-offset)/2.0 && position.y - softblock.position.y < (size.height + softblock.size.height-offset)/2.0 && softblock.position.y - position.y < (size.height + softblock.size.height-offset)/2.0 {
-          return false;
-        }
-      }
-      return true;
-    }
-
-    pub fn can_fire(position: Point, blocks: &mut Vec<Block>, size: Size) -> bool{
-      let offset: f64 = 10.0;
-      for block in blocks {
-        if position.x - block.position.x < (size.width + block.size.width-offset)/2.0 && block.position.x - position.x < (size.width + block.size.width-offset)/2.0 && position.y - block.position.y < (size.height + block.size.height-offset)/2.0 && block.position.y - position.y < (size.height + block.size.height-offset)/2.0 {
-          return false;
-        }
-      }
-      return true;
-    }
-
-    pub fn can_fire_softblock(position: Point, softblocks: &mut Vec<Softblock>, size: Size) -> bool {
-      let offset: f64 = 10.0;
-      for softblock in softblocks {
-        if position.x - softblock.position.x < (size.width + softblock.size.width-offset)/2.0 && softblock.position.x - position.x < (size.width + softblock.size.width-offset)/2.0 && position.y - softblock.position.y < (size.height + softblock.size.height-offset)/2.0 && softblock.position.y - position.y < (size.height + softblock.size.height-offset)/2.0 {
-          softblock.remove();
-          return false;
-        }
-      }
-      return true;
-    }
-
-    pub fn can_fire_item(position: Point, items: &mut Vec<Item>, size: Size) -> bool {
-      let offset: f64 = 10.0;
-      for item in items {
-        if position.x - item.position.x < (size.width + item.size.width-offset)/2.0 && item.position.x - position.x < (size.width + item.size.width-offset)/2.0 && position.y - item.position.y < (size.height + item.size.height-offset)/2.0 && item.position.y - position.y < (size.height + item.size.height-offset)/2.0 {
-          item.remove();
-          return false;
-        }
-      }
-      return true;
-    }
-
-    pub fn get_item(position: Point, items: &mut Vec<Item>, size: Size) -> usize {
-      let offset: f64 = 10.0;
-      for item in items {
-        if position.x - item.position.x < (size.width + item.size.width-offset)/2.0 && item.position.x - position.x < (size.width + item.size.width-offset)/2.0 && position.y - item.position.y < (size.height + item.size.height-offset)/2.0 && item.position.y - position.y < (size.height + item.size.height-offset)/2.0 {
-          let item_type = item.item_type;
-          item.remove();
-          return item_type;
-        }
-      }
-      return 0;
-    }
-
-    pub fn can_move_bomb(position: Point, bombs: &mut Vec<Bomb>, size: Size, player_id: usize) -> bool{
-      let offset: f64 = 10.0;
-      let mut flag: bool;
-      for bomb in bombs {
-        flag = true;
-        for over_player in &bomb.over_players {
-          if *over_player == player_id {
-            flag = false;
-          }
-        }
-        if flag {
-          if position.x - bomb.position.x < (size.width + bomb.size.width-offset)/2.0 && bomb.position.x - position.x < (size.width + bomb.size.width-offset)/2.0 && position.y - bomb.position.y < (size.height + bomb.size.height-offset)/2.0 && bomb.position.y - position.y < (size.height + bomb.size.height-offset)/2.0 {
-          return false;
+        let mut position: Point = bomb.position;
+        position.set_field_point();
+        if bomb.speed == 0.0 {
+          field[(position.x/50.0+position.y/50.0*15.0) as usize] = 5;
+        } else {
+          match bomb.direction {
+            1 => {
+              field[(position.x/50.0+position.y/50.0*15.0) as usize + 15] = -5;
+              field[(position.x/50.0+position.y/50.0*15.0) as usize - 15] = -5;
+            },
+            2 => {
+              field[(position.x/50.0+position.y/50.0*15.0) as usize + 15] = -5;
+              field[(position.x/50.0+position.y/50.0*15.0) as usize - 15] = -5;
+            },
+            3 => {
+              field[(position.x/50.0+position.y/50.0*15.0) as usize + 1] = -5;
+              field[(position.x/50.0+position.y/50.0*15.0) as usize - 1] = -5;
+            },
+            4 => {
+              field[(position.x/50.0+position.y/50.0*15.0) as usize + 1] = -5;
+              field[(position.x/50.0+position.y/50.0*15.0) as usize - 1] = -5;
+            },
+            _ => ()
           }
         }
       }
-      return true;
-    }
-
-    pub fn is_over_bomb(position: Point, bomb_position: Point, size:Size) -> bool {
-      let offset: f64 = 10.0;
-      if position.x - bomb_position.x < (size.width + size.width-offset)/2.0 && bomb_position.x - position.x < (size.width + size.width-offset)/2.0 && position.y - bomb_position.y < (size.height + size.height-offset)/2.0 && bomb_position.y - position.y < (size.height + size.height-offset)/2.0 {
-        return true;
+      for fire in fires {
+        let position: Point = fire.position;
+        field[(position.x/50.0+position.y/50.0*15.0) as usize] = 6;
       }
-      return false;
-    }
+      for item in items {
+        let position: Point = item.position;
+        field[(position.x/50.0+position.y/50.0*15.0) as usize] = (item.item_type*4+10) as i32;
+      }
+      for softblock in softblocks {
+        let position: Point = softblock.position;
+        if field[(position.x/50.0+position.y/50.0*15.0) as usize] < 0 {
+          field[(position.x/50.0+position.y/50.0*15.0) as usize] = 3;
+        } else {
+          field[(position.x/50.0+position.y/50.0*15.0) as usize] += 3;
+        }
+      }
+      field
+  }
 }

@@ -22,7 +22,7 @@ impl Item {
 
     pub fn update(&mut self, events: &mut Vec<Events>) {
       if self.dead {
-        events.push(Events::new("ir", self.position, 0, 0, 0));
+        events.push(Events::new("ir", self.position, 0, 0, 0, 0));
       }
     }
 

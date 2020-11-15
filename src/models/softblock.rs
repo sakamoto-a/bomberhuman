@@ -20,7 +20,7 @@ impl Softblock {
 
     pub fn update(&mut self, events: &mut Vec<Events>) {
       if self.dead {
-        events.push(Events::new("sbr", self.position, 0, 0, 0));
+        events.push(Events::new("sbr", self.position, 0, 0, 0, 0));
       }
     }
 

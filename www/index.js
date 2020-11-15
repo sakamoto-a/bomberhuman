@@ -17,12 +17,26 @@ const resources = () => {
     player2: document.createElement('img'),
     player3: document.createElement('img'),
     bomb: document.createElement('img'),
+    uni_bomb: document.createElement('img'),
     fire: document.createElement('img'),
     bomb_item: document.createElement('img'),
     fire_item: document.createElement('img'),
     speed_item: document.createElement('img'),
+    kick_item: document.createElement('img'),
+    bomb_type_item: document.createElement('img'),
     block: document.createElement('img'),
     softblock: document.createElement('img'),
+    item_frame: document.createElement('img'),
+    zero: document.createElement('img'),
+    one: document.createElement('img'),
+    two: document.createElement('img'),
+    three: document.createElement('img'),
+    four: document.createElement('img'),
+    five: document.createElement('img'),
+    six: document.createElement('img'),
+    seven: document.createElement('img'),
+    eight: document.createElement('img'),
+    nine: document.createElement('img'),
   }
 
   res.player0.width = 50;
@@ -39,7 +53,10 @@ const resources = () => {
   res.player3.src = "/image/human.png";
   res.bomb.width = 50;
   res.bomb.height = 50;
-  res.bomb.src = "/image/1p.png";
+  res.bomb.src = "/image/bomb.png";
+  res.uni_bomb.width = 50;
+  res.uni_bomb.height = 50;
+  res.uni_bomb.src = "/image/uni_bomb.png";
   res.fire.width = 50;
   res.fire.height = 50;
   res.fire.src = "/image/fire.png";
@@ -52,12 +69,52 @@ const resources = () => {
   res.speed_item.width = 50;
   res.speed_item.height = 50;
   res.speed_item.src = "/image/speed_item.png";
+  res.kick_item.width = 50;
+  res.kick_item.height = 50;
+  res.kick_item.src = "/image/kick_item.png";
+  res.bomb_type_item.width = 50;
+  res.bomb_type_item.height = 50;
+  res.bomb_type_item.src = "/image/bomb_type_item.png";
   res.block.width = 50;
   res.block.height = 50;
   res.block.src = "/image/block.jpg";
   res.softblock.width = 50;
   res.softblock.height = 50;
   res.softblock.src = "/image/soft_block.png";
+  res.item_frame.width = 50;
+  res.item_frame.height = 50;
+  res.item_frame.src = "/image/item_frame.jpg";
+  
+  res.one.width = 40;
+  res.one.height = 50;
+  res.one.src = "/image/p1.gif";
+  res.two.width = 40;
+  res.two.height = 50;
+  res.two.src = "/image/p2.gif";
+  res.three.width = 40;
+  res.three.height = 50;
+  res.three.src = "/image/p3.gif";
+  res.four.width = 40;
+  res.four.height = 50;
+  res.four.src = "/image/p4.gif";
+  res.five.width = 40;
+  res.five.height = 50;
+  res.five.src = "/image/p5.gif";
+  res.six.width = 40;
+  res.six.height = 50;
+  res.six.src = "/image/p6.gif";
+  res.seven.width = 40;
+  res.seven.height = 50;
+  res.seven.src = "/image/p7.gif";
+  res.eight.width = 40;
+  res.eight.height = 50;
+  res.eight.src = "/image/p8.gif";
+  res.nine.width = 40;
+  res.nine.height = 50;
+  res.nine.src = "/image/p9.gif";
+  res.zero.width = 40;
+  res.zero.height = 50;
+  res.zero.src = "/image/p0.gif";
 
   return res;
 }
@@ -68,7 +125,7 @@ let clear_screen = () => {
 }
 
 
-let result_menu_screen = () => {
+let result_menu_screen = (winner) => {
   ctx.lineWidth = 2;
   ctx.fillStyle = "black";
   ctx.font = "100px cursive";
@@ -77,6 +134,11 @@ let result_menu_screen = () => {
   let x = canvas.width / 2
   let y = canvas.height / 4
   ctx.fillText("END", x, y);
+  if (winner == 0) {
+    ctx.fillText("Draw", x, y+100);
+  } else {
+    ctx.fillText(String(winner)+"Pwin", x, y+100);
+  }
 }
 
 function draw_player(x, y, angle, player_id) {
@@ -115,10 +177,16 @@ function draw_player(x, y, angle, player_id) {
 }
 
 
-function draw_bomb(x, y) {
-  ctx.drawImage(res.bomb, x, y, res.bomb.width, res.bomb.height);
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.fillStyle = "black";
+function draw_bomb(x, y, type) {
+  if (type == 0) {
+    ctx.drawImage(res.bomb, x, y, res.bomb.width, res.bomb.height);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.fillStyle = "black";
+  } else if (type == 1) {
+    ctx.drawImage(res.uni_bomb, x, y, res.uni_bomb.width, res.uni_bomb.height);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.fillStyle = "black";
+  }
 }
 
 function draw_fire(x, y) {
@@ -128,6 +196,9 @@ function draw_fire(x, y) {
 }
 
 function draw_item(x, y, type) {
+    ctx.drawImage(res.item_frame, x, y, res.item_frame.width, res.item_frame.height);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.fillStyle = "black";
   if (type == 1) {
     ctx.drawImage(res.fire_item, x, y, res.fire_item.width, res.fire_item.height);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -138,6 +209,14 @@ function draw_item(x, y, type) {
     ctx.fillStyle = "black";
   } else if (type == 3) {
     ctx.drawImage(res.speed_item, x, y, res.speed_item.width, res.speed_item.height);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.fillStyle = "black";
+  } else if (type == 4) {
+    ctx.drawImage(res.kick_item, x, y, res.kick_item.width, res.kick_item.height);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.fillStyle = "black";
+  } else if (type == 5) {
+    ctx.drawImage(res.bomb_type_item, x, y, res.bomb_type_item.width, res.bomb_type_item.height);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.fillStyle = "black";
   }
@@ -153,6 +232,74 @@ function draw_softblock(x, y) {
   ctx.drawImage(res.softblock, x, y, res.softblock.width, res.softblock.height);
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.fillStyle = "black";
+}
+
+function draw_number(x, y, number) {
+  switch (number) {
+    case 0:
+      ctx.drawImage(res.zero, x, y, res.zero.width, res.zero.height);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.fillStyle = "black";
+      break;
+    case 1:
+      ctx.drawImage(res.one, x, y, res.one.width, res.one.height);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.fillStyle = "black";
+      break;
+    case 2:
+      ctx.drawImage(res.two, x, y, res.two.width, res.two.height);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.fillStyle = "black";
+      break;
+    case 3:
+      ctx.drawImage(res.three, x, y, res.three.width, res.three.height);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.fillStyle = "black";
+      break;
+    case 4:
+      ctx.drawImage(res.four, x, y, res.four.width, res.four.height);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.fillStyle = "black";
+      break;
+    case 5:
+      ctx.drawImage(res.five, x, y, res.five.width, res.five.height);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.fillStyle = "black";
+      break;
+    case 6:
+      ctx.drawImage(res.six, x, y, res.six.width, res.six.height);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.fillStyle = "black";
+      break;
+    case 7:
+      ctx.drawImage(res.seven, x, y, res.seven.width, res.seven.height);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.fillStyle = "black";
+      break;
+    case 8:
+      ctx.drawImage(res.eight, x, y, res.eight.width, res.eight.height);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.fillStyle = "black";
+      break;
+    case 9:
+      ctx.drawImage(res.nine, x, y, res.nine.width, res.nine.height);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.fillStyle = "black";
+      break;
+    default:
+      break;
+   }
+}
+
+function draw_hurry_up() {
+  ctx.lineWidth = 2;
+  ctx.fillStyle = "red";
+  ctx.font = "100px cursive";
+  ctx.textBaseline = 'center';
+	ctx.textAlign = 'center';
+  let x = 700 / 2
+  let y = 600 / 2
+  ctx.fillText("HURRY UP", x, y);
 }
 
 let res = resources();
@@ -172,7 +319,8 @@ let drawAndUpdate = (timestamp) => {
   }
 
   if (game_data.is_end()) {
-    result_menu_screen();
+    let winner = game_data.get_winner();
+    result_menu_screen(winner);
     //alert("Game End");
     return;
   }
@@ -185,10 +333,12 @@ let drawAndUpdate = (timestamp) => {
   let bomb_num = game_data.get_bomb_num();
   var b_x = [];
   var b_y = [];
+  var b_type = [];
   for(let i=0; i<bomb_num; i++) {
     b_x[i] = game_data.x(i, "bomb");
     b_y[i] = game_data.y(i, "bomb");
-    draw_bomb(b_x[i], b_y[i]);
+    b_type[i] = game_data.what_type(i, "bomb");
+    draw_bomb(b_x[i], b_y[i], b_type[i]);
   }
 
   let fire_num = game_data.get_fire_num();
@@ -207,17 +357,8 @@ let drawAndUpdate = (timestamp) => {
   for(let i=0; i<item_num; i++) {
     i_x[i] = game_data.x(i, "item");
     i_y[i] = game_data.y(i, "item");
-    i_type[i] = game_data.item_type(i, "item");
+    i_type[i] = game_data.what_type(i, "item");
     draw_item(i_x[i], i_y[i], i_type[i]);
-  }
-
-  let block_num = game_data.get_block_num();
-  var bl_x = [];
-  var bl_y = [];
-  for(let i=0; i<block_num; i++) {
-    bl_x[i] = game_data.x(i, "block");
-    bl_y[i] = game_data.y(i, "block");
-    draw_block(bl_x[i], bl_y[i]);
   }
 
   let softblock_num = game_data.get_softblock_num();
@@ -241,6 +382,46 @@ let drawAndUpdate = (timestamp) => {
       draw_player(p_x[i], p_y[i], angle[i], i);
     }
   }
+
+  let block_num = game_data.get_block_num();
+  var bl_x = [];
+  var bl_y = [];
+  for(let i=0; i<block_num; i++) {
+    bl_x[i] = game_data.x(i, "block");
+    bl_y[i] = game_data.y(i, "block");
+    draw_block(bl_x[i], bl_y[i]);
+  }
+
+
+  let fire_item_num = game_data.get_fire_item_num();
+  for (let i=0; i<fire_item_num; i++) {
+    draw_item(800+i*25, 100, 1);
+  }
+  let bomb_item_num = game_data.get_bomb_item_num();
+  for (let i=0; i<bomb_item_num; i++) {
+    draw_item(800+i*25, 150, 2);
+  }
+  let speed_item_num = game_data.get_speed_item_num();
+  for (let i=0; i<speed_item_num; i++) {
+    draw_item(800+i*25, 200, 3);
+  }
+  let kick_item_num = game_data.get_kick_item_num();
+  for (let i=0; i<kick_item_num; i++) {
+    draw_item(800+i*25, 250, 4);
+  }
+  let uni_item_num = game_data.get_uni_item_num();
+  for (let i=0; i<uni_item_num; i++) {
+    draw_item(800+i*25, 300, 5);
+  }
+  
+  let time = game_data.get_time();
+  if ((time < 31.75 && time > 31.5) || (time < 31.25 && time > 31) || (time < 30.75 && time > 30.5)){
+    draw_hurry_up();
+  }
+  time = Math.floor(time);
+  draw_number(800, 0, Math.floor(time/60));
+  draw_number(850, 0, Math.floor((time-Math.floor(time/60)*60)/10));
+  draw_number(890, 0, Math.floor((time-Math.floor(time/60)*60)%10));
 
   prevTimestamp = timestamp;
   requestAnimationFrame(drawAndUpdate);

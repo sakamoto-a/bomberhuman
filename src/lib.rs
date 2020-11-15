@@ -255,8 +255,16 @@ impl GameData {
         }
     }
 
-    pub fn item_type(&mut self, num:usize, char_name: &str) -> usize {
-       self.game_state.world.items[num].get_item_type()
+    pub fn what_type(&mut self, num:usize, char_name: &str) -> usize {
+      match char_name {
+        "item" => {
+          self.game_state.world.items[num].get_item_type()
+        },
+        "bomb" => {
+          self.game_state.world.bombs[num].bomb_type as usize
+        }
+        _ => 0,
+      }
     }
 
 
@@ -275,6 +283,27 @@ impl GameData {
     pub fn get_fire_num(&mut self) -> usize {
         self.game_state.world.get_fire_num()
     }
+//debug
+    pub fn get_fire_item_num(&mut self) -> usize {
+        self.game_state.world.players[0].items.fire_up as usize
+    }
+    pub fn get_bomb_item_num(&mut self) -> usize {
+        self.game_state.world.players[0].items.bomb_up as usize
+    }
+
+    pub fn get_speed_item_num(&mut self) -> usize {
+        self.game_state.world.players[0].items.speed_up as usize
+    }
+    pub fn get_kick_item_num(&mut self) -> usize {
+        self.game_state.world.players[0].items.kick as usize
+    }
+    pub fn get_uni_item_num(&mut self) -> usize {
+        self.game_state.world.players[0].items.bomb_type as usize
+    }
+//
+    pub fn get_winner(&mut self) -> usize {
+        self.game_state.world.get_winner()
+    }
 
     pub fn get_item_num(&mut self) -> usize {
         self.game_state.world.get_item_num()
@@ -286,6 +315,10 @@ impl GameData {
 
     pub fn get_softblock_num(&mut self) -> usize {
         self.game_state.world.get_softblock_num()
+    }
+
+    pub fn get_time(&mut self) -> f64 {
+      self.game_state.world.life
     }
 
     pub fn is_end(&mut self) -> bool {
