@@ -11,6 +11,7 @@ use crate::controller::Actions;
 use crate::controller::Buttons;
 use crate::controller::Events;
 use rand::seq::SliceRandom;
+use rand::Rng;
 
 pub struct World {
     pub blocks: Vec<Block>,
@@ -48,8 +49,8 @@ impl World {
             1, 2, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 2, 1,
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         ];
-        let mut item_set = vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-                              0, 0, 0, 0, 0, 0, 0, 0,
+        let mut item_set = vec![0, 0, 0, 0, 0, 0, 0,  
+                              0, 0, 0, 0, 0, 0, 
                               3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
                               3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
                               3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
@@ -57,7 +58,7 @@ impl World {
                               7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
                               11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,
                               15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
-                              19, 19, 19, 23, 23, 23,
+                              19, 19, 19, 23, 23, 23, 27, 27, 27, 31, 31,
                               ];
         let mut n:usize = 0;
         let mut rng = rand::thread_rng();
@@ -89,19 +90,19 @@ impl World {
             match n {
                 0 => {
                     let point = Point::new(50.0, 50.0);
-                    players.push(Player::new(point, 150.0, 0.0, Actions::new("up", "down", "left", "right", "/"), 0));
+                    players.push(Player::new(point, 150.0, 0.0, Actions::new("up", "down", "left", "right", "/", "."), 0));
                 },
                 1 => {
                     let point = Point::new(650.0, 550.0);
-                    players.push(Player::new(point, 150.0, 0.0, Actions::new("w", "s", "a", "d", "x"), 1));
+                    players.push(Player::new(point, 150.0, 0.0, Actions::new("w", "s", "a", "d", "x", "q"), 1));
                 },
                 2 => {
                     let point = Point::new(50.0, 550.0);
-                    players.push(Player::new(point, 150.0, 0.0, Actions::new("t", "g", "f", "h", "b"), 2));
+                    players.push(Player::new(point, 150.0, 0.0, Actions::new("t", "g", "f", "h", "b", "r"), 2));
                 },
                 3 => {
                     let point = Point::new(650.0, 50.0);
-                    players.push(Player::new(point, 150.0, 0.0, Actions::new("i", "k", "j", "l", ","), 3));
+                    players.push(Player::new(point, 150.0, 0.0, Actions::new("i", "k", "j", "l", ",", "u"), 3));
                 },
                 _ => (),
             }
@@ -130,7 +131,7 @@ impl World {
             field: field,
             size: size,
             end: false,
-            life: 40.0,
+            life: 180.0,
             next_bomb_time: 0.0,
             hurry_up: hurry_up,
         }
@@ -140,7 +141,7 @@ impl World {
       self.life -= dt;
       if self.life < 30.0 {
         self.next_bomb_time -= dt;
-        if self.next_bomb_time < 0.0 {
+ /*       if self.next_bomb_time < 0.0 {
           let mut field = World::mapping(&mut self.players, &mut self.fires, &mut self.bombs, &mut self.items, &mut self.softblocks);
           let mut n = 0;
           for i in 0..field.len() {
@@ -180,7 +181,7 @@ impl World {
                 self.next_bomb_time = 0.25;
               }
         }
-/*        if self.next_bomb_time < 0.0 {
+*/        if self.next_bomb_time < 0.0 {
           match self.hurry_up.pop() {
             Some(next) => {
               let next_x = next % 15;
@@ -197,7 +198,7 @@ impl World {
           }
           self.next_bomb_time = 30.0/113.0;
         }
-*/
+
       }
         
         for item in &mut self.items {
@@ -221,6 +222,7 @@ impl World {
             self.events.push(Events::new("pd", player.position, 0, 0, player.player_id, 0));
           }
         }
+
         for event in &mut self.events {
             match event.event {
               "pm" => {
@@ -248,7 +250,17 @@ impl World {
                         },
                         5 => {
                          self.players[event.player_id].bomb_type = 1;
-                         self.players[event.player_id].items.bomb_type += 1;
+                         self.players[event.player_id].items.uni_bomb += 1;
+                        },
+                        6 => {
+                         self.players[event.player_id].bomb_type = 2;
+                         self.players[event.player_id].items.gomu_bomb += 1;
+                        },
+                        7 => {
+                          let mut rng = rand::thread_rng();
+                          let i: u8 = rng.gen();
+                          self.players[event.player_id].status = (i % 3 + 1) as i8;
+                          self.players[event.player_id].status_life = 10.0;
                         },
                         _ => (),
                       }
@@ -280,7 +292,8 @@ impl World {
                 let mut bomb_item_num = self.players[event.player_id].items.bomb_up;
                 let mut speed_item_num = self.players[event.player_id].items.speed_up;
                 let mut kick_item_num = self.players[event.player_id].items.kick;
-                let mut bomb_type_item_num = self.players[event.player_id].items.bomb_type;
+                let mut uni_bomb_item_num = self.players[event.player_id].items.uni_bomb;
+                let mut gomu_bomb_item_num = self.players[event.player_id].items.gomu_bomb;
                 for i in 0..item_set.len() {
                   if fire_item_num > 0 {
                     item_set[i] = 4;
@@ -294,9 +307,12 @@ impl World {
                   } else if kick_item_num > 0 {
                     item_set[i] = 16;
                     kick_item_num -= 1;
-                  } else if bomb_type_item_num > 0 {
+                  } else if uni_bomb_item_num > 0 {
                     item_set[i] = 20;
-                    bomb_type_item_num -= 1;
+                    uni_bomb_item_num -= 1;
+                  } else if gomu_bomb_item_num > 0 {
+                    item_set[i] = 24;
+                    gomu_bomb_item_num -= 1;
                   }
                 }
                 n = 0;
@@ -349,7 +365,11 @@ impl World {
                       if item_type > 0 {
                         for bomb in &mut self.bombs {
                           if bomb.bomb_id == event.player_id {
-                            bomb.move_stop();
+                            if bomb.bomb_type == 2 {
+                              bomb.move_reverse();
+                            } else {
+                              bomb.move_stop();
+                            }
                             break;
                           }
                         }
@@ -364,7 +384,11 @@ impl World {
                       } else {
                         for bomb in &mut self.bombs {
                           if bomb.bomb_id == event.player_id {
-                            bomb.move_stop();
+                            if bomb.bomb_type == 2 {
+                              bomb.move_reverse();
+                            } else {
+                              bomb.move_stop();
+                            }
                             break;
                           }
                         }
@@ -372,7 +396,11 @@ impl World {
                     } else {
                         for bomb in &mut self.bombs {
                           if bomb.bomb_id == event.player_id {
-                            bomb.move_stop();
+                            if bomb.bomb_type == 2 {
+                              bomb.move_reverse();
+                            } else {
+                              bomb.move_stop();
+                            }
                             break;
                           }
                         }
@@ -381,7 +409,11 @@ impl World {
                   } else {
                         for bomb in &mut self.bombs {
                           if bomb.bomb_id == event.player_id {
-                            bomb.move_stop();
+                            if bomb.bomb_type == 2 {
+                              bomb.move_reverse();
+                            } else {
+                              bomb.move_stop();
+                            }
                             break;
                           }
                         }
@@ -390,7 +422,11 @@ impl World {
                 } else {
                         for bomb in &mut self.bombs {
                           if bomb.bomb_id == event.player_id {
-                            bomb.move_stop();
+                            if bomb.bomb_type == 2 {
+                              bomb.move_reverse();
+                            } else {
+                              bomb.move_stop();
+                            }
                             break;
                           }
                         }
@@ -445,12 +481,12 @@ impl World {
             count += 1;
           }
         }
-        if count <= 0 {
+        if count <= 1 {
           self.end = true;
         }
 
         if self.life <= 0.0 {
-        //  self.end = true;
+          self.end = true;
         }
 
         self.events.clear();

@@ -49,6 +49,16 @@ impl Collision {
       return true;
     }
 
+    pub fn dokuro_player(position: Point, players: &mut Vec<Player>, size: Size) -> usize{
+      let offset: f64 = 10.0;
+      for player in players {
+        if position.x - player.position.x < (size.width + player.size.width-offset)/2.0 && player.position.x - position.x < (size.width + player.size.width-offset)/2.0 && position.y - player.position.y < (size.height + player.size.height-offset)/2.0 && player.position.y - position.y < (size.height + player.size.height-offset)/2.0 {
+          return player.player_id;
+        }
+      }
+      return 0;
+    }
+
     pub fn can_move_softblock(position: Point, softblocks: &mut Vec<Softblock>, size: Size) -> bool{
       let offset: f64 = 10.0;
       for softblock in softblocks {

@@ -82,6 +82,14 @@ impl GameData {
                     self.buttons.button.retain(|&x| x != "/");
                 }
             },
+            "." => {
+                if flag == 1 {
+                    self.buttons.button.retain(|&x| x != ".");
+                    self.buttons.button.push(".");
+                } else {
+                    self.buttons.button.retain(|&x| x != ".");
+                }
+            },
             "w" => {
                 if flag == 1 {
                     self.buttons.button.retain(|&x| x != "w");
@@ -120,6 +128,14 @@ impl GameData {
                     self.buttons.button.push("x");
                 } else {
                     self.buttons.button.retain(|&x| x != "x");
+                }
+            },
+            "q" => {
+                if flag == 1 {
+                    self.buttons.button.retain(|&x| x != "q");
+                    self.buttons.button.push("q");
+                } else {
+                    self.buttons.button.retain(|&x| x != "q");
                 }
             },
             "t" => {
@@ -162,6 +178,14 @@ impl GameData {
                     self.buttons.button.retain(|&x| x != "b");
                 }
             },
+            "r" => {
+                if flag == 1 {
+                    self.buttons.button.retain(|&x| x != "r");
+                    self.buttons.button.push("r");
+                } else {
+                    self.buttons.button.retain(|&x| x != "r");
+                }
+            },
             "i" => {
                 if flag == 1 {
                     self.buttons.button.retain(|&x| x != "i");
@@ -200,6 +224,14 @@ impl GameData {
                     self.buttons.button.push(",");
                 } else {
                     self.buttons.button.retain(|&x| x != ",");
+                }
+            },
+            "u" => {
+                if flag == 1 {
+                    self.buttons.button.retain(|&x| x != "u");
+                    self.buttons.button.push("u");
+                } else {
+                    self.buttons.button.retain(|&x| x != "u");
                 }
             },
             _ => (),
@@ -298,7 +330,7 @@ impl GameData {
         self.game_state.world.players[0].items.kick as usize
     }
     pub fn get_uni_item_num(&mut self) -> usize {
-        self.game_state.world.players[0].items.bomb_type as usize
+        self.game_state.world.players[0].items.uni_bomb as usize
     }
 //
     pub fn get_winner(&mut self) -> usize {

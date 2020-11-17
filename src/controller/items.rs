@@ -3,7 +3,8 @@ pub struct Items {
     pub fire_up: i8,
     pub speed_up: i8,
     pub kick: i8,
-    pub bomb_type: i8,
+    pub uni_bomb: i8,
+    pub gomu_bomb: i8,
 }
 
 impl Items {
@@ -13,7 +14,8 @@ impl Items {
           fire_up: 0,
           speed_up: 0,
           kick: 0,
-          bomb_type: 0,
+          uni_bomb: 0,
+          gomu_bomb: 0,
         }
     }
 }

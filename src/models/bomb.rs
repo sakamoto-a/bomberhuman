@@ -74,6 +74,24 @@ impl Bomb {
       self.direction = 0;
     }
 
+    pub fn move_reverse(&mut self) {
+        match self.direction {
+          1 => {
+            self.direction=2;
+          },  
+          2 => {
+            self.direction=1;
+          },  
+          3 => {
+            self.direction=4;
+          },  
+          4 => {
+            self.direction=3;
+          }, 
+          _ => (),
+        }
+    }
+
     pub fn position(&self) -> Point {
         self.position
     }
