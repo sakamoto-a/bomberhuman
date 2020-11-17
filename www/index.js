@@ -18,11 +18,13 @@ const resources = () => {
     player3: document.createElement('img'),
     bomb: document.createElement('img'),
     uni_bomb: document.createElement('img'),
+    gomu_bomb: document.createElement('img'),
     fire: document.createElement('img'),
     bomb_item: document.createElement('img'),
     fire_item: document.createElement('img'),
     speed_item: document.createElement('img'),
     kick_item: document.createElement('img'),
+    dokuro_item: document.createElement('img'),
     bomb_type_item: document.createElement('img'),
     block: document.createElement('img'),
     softblock: document.createElement('img'),
@@ -41,22 +43,25 @@ const resources = () => {
 
   res.player0.width = 50;
   res.player0.height = 50;
-  res.player0.src = "/image/human.png";
+  res.player0.src = "/image/player1.png";
   res.player1.width = 50;
   res.player1.height = 50;
-  res.player1.src = "/image/human.png";
+  res.player1.src = "/image/player2.png";
   res.player2.width = 50;
   res.player2.height = 50;
-  res.player2.src = "/image/human.png";
+  res.player2.src = "/image/player3.png";
   res.player3.width = 50;
   res.player3.height = 50;
-  res.player3.src = "/image/human.png";
+  res.player3.src = "/image/player4.png";
   res.bomb.width = 50;
   res.bomb.height = 50;
   res.bomb.src = "/image/bomb.png";
   res.uni_bomb.width = 50;
   res.uni_bomb.height = 50;
   res.uni_bomb.src = "/image/uni_bomb.png";
+  res.gomu_bomb.width = 50;
+  res.gomu_bomb.height = 50;
+  res.gomu_bomb.src = "/image/gomu_bomb.png";
   res.fire.width = 50;
   res.fire.height = 50;
   res.fire.src = "/image/fire.png";
@@ -72,6 +77,9 @@ const resources = () => {
   res.kick_item.width = 50;
   res.kick_item.height = 50;
   res.kick_item.src = "/image/kick_item.png";
+  res.dokuro_item.width = 50;
+  res.dokuro_item.height = 50;
+  res.dokuro_item.src = "/image/dokuro_item.png";
   res.bomb_type_item.width = 50;
   res.bomb_type_item.height = 50;
   res.bomb_type_item.src = "/image/bomb_type_item.png";
@@ -186,6 +194,10 @@ function draw_bomb(x, y, type) {
     ctx.drawImage(res.uni_bomb, x, y, res.uni_bomb.width, res.uni_bomb.height);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.fillStyle = "black";
+  } else if (type == 2) {
+    ctx.drawImage(res.gomu_bomb, x, y, res.gomu_bomb.width, res.gomu_bomb.height);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.fillStyle = "black";
   }
 }
 
@@ -199,26 +211,44 @@ function draw_item(x, y, type) {
     ctx.drawImage(res.item_frame, x, y, res.item_frame.width, res.item_frame.height);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.fillStyle = "black";
-  if (type == 1) {
-    ctx.drawImage(res.fire_item, x, y, res.fire_item.width, res.fire_item.height);
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.fillStyle = "black";
-  } else if (type == 2) {
-    ctx.drawImage(res.bomb_item, x, y, res.bomb_item.width, res.bomb_item.height);
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.fillStyle = "black";
-  } else if (type == 3) {
-    ctx.drawImage(res.speed_item, x, y, res.speed_item.width, res.speed_item.height);
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.fillStyle = "black";
-  } else if (type == 4) {
-    ctx.drawImage(res.kick_item, x, y, res.kick_item.width, res.kick_item.height);
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.fillStyle = "black";
-  } else if (type == 5) {
-    ctx.drawImage(res.bomb_type_item, x, y, res.bomb_type_item.width, res.bomb_type_item.height);
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.fillStyle = "black";
+    switch (type) {
+      case 1:
+        ctx.drawImage(res.fire_item, x, y, res.fire_item.width, res.fire_item.height);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.fillStyle = "black";
+        break;
+      case 2:
+        ctx.drawImage(res.bomb_item, x, y, res.bomb_item.width, res.bomb_item.height);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.fillStyle = "black";
+        break;
+      case 3:
+        ctx.drawImage(res.speed_item, x, y, res.speed_item.width, res.speed_item.height);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.fillStyle = "black";
+        break;
+      case 4:
+        ctx.drawImage(res.kick_item, x, y, res.kick_item.width, res.kick_item.height);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.fillStyle = "black";
+        break;
+      case 5:
+        ctx.drawImage(res.bomb_type_item, x, y, res.bomb_type_item.width, res.bomb_type_item.height);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.fillStyle = "black";
+        break;
+      case 6:
+        ctx.drawImage(res.gomu_bomb, x, y, res.gomu_bomb.width, res.gomu_bomb.height);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.fillStyle = "black";
+        break;
+      case 7:
+        ctx.drawImage(res.dokuro_item, x, y, res.dokuro_item.width, res.dokuro_item.height);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.fillStyle = "black";
+        break;
+     default :
+        break;
   }
 }
 
@@ -448,6 +478,9 @@ const processKey = (key, f) => {
     case "/":
       game_data.buttons("/", f);
       break;
+    case ".":
+      game_data.buttons(".", f);
+      break;
     case "w":
       game_data.buttons("w", f);
       break;
@@ -462,6 +495,9 @@ const processKey = (key, f) => {
       break;
     case "x":
       game_data.buttons("x", f);
+      break;
+    case "q":
+      game_data.buttons("q", f);
       break;
     case "t":
       game_data.buttons("t", f);
@@ -478,6 +514,9 @@ const processKey = (key, f) => {
     case "b":
       game_data.buttons("b", f);
       break;
+    case "r":
+      game_data.buttons("r", f);
+      break;
     case "i":
       game_data.buttons("i", f);
       break;
@@ -492,6 +531,9 @@ const processKey = (key, f) => {
       break;
     case ",":
       game_data.buttons(",", f);
+      break;
+    case "u":
+      game_data.buttons("u", f);
       break;
   }
 }
