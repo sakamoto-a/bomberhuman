@@ -151,22 +151,34 @@ impl Player {
           if button == &self.actions.move_grid {
             let mut new_position = self.position;
             new_position.set_field_point();
+            let speed;
+            match self.status {
+              1 => {
+                speed = 500.0;
+              },
+              2 => {
+                speed = 25.0;
+              },
+              _ => {
+                speed = self.speed;
+              }
+            }
             if self.position.x > new_position.x {
               if self.position.x - dt*self.speed > new_position.x {
-                new_position.x = self.position.x - dt*self.speed;
+                new_position.x = self.position.x - dt*speed;
               }
             } else {
               if self.position.x + dt*self.speed < new_position.x {
-                new_position.x = self.position.x + dt*self.speed;
+                new_position.x = self.position.x + dt*speed;
               }
             }
             if self.position.y > new_position.y {
               if self.position.y - dt*self.speed > new_position.y {
-                new_position.y = self.position.y - dt*self.speed;
+                new_position.y = self.position.y - dt*speed;
               }
             } else {
               if self.position.y + dt*self.speed < new_position.y {
-                new_position.y = self.position.y + dt*self.speed;
+                new_position.y = self.position.y + dt*speed;
               } 
             }
             events.push(Events::new("pm", new_position, 0, 0, self.player_id, 0));
