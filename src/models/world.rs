@@ -131,7 +131,7 @@ impl World {
             field: field,
             size: size,
             end: false,
-            life: 180.0,
+            life: 35.0,
             next_bomb_time: 0.0,
             hurry_up: hurry_up,
         }
@@ -232,16 +232,22 @@ impl World {
                       self.players[event.player_id].position_move(event.position);
                       let item_type = Collision::get_item(event.position, &mut self.items, self.players[event.player_id].size);
                       match item_type {
-                        1 => { 
-                         self.players[event.player_id].firepower += 1;
+                        1 => {
+                         if self.players[event.player_id].items.fire_up < 8 {
+                           self.players[event.player_id].firepower += 1;
+                         }
                          self.players[event.player_id].items.fire_up += 1;
                         },
                         2 => {
-                         self.players[event.player_id].bomb_num += 1;
+                         if self.players[event.player_id].items.bomb_up < 8 {
+                           self.players[event.player_id].bomb_num += 1;
+                         }
                          self.players[event.player_id].items.bomb_up += 1;
                         },
                         3 => {
-                         self.players[event.player_id].speed += 25.0;
+                         if self.players[event.player_id].items.speed_up < 8{
+                           self.players[event.player_id].speed += 25.0;
+                         }
                          self.players[event.player_id].items.speed_up += 1;
                         },
                         4 => {
