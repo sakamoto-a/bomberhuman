@@ -73,10 +73,10 @@ impl Player {
               let speed;
               match self.status {
                 1 => {
-                  speed = 500.0;
+                  speed = 750.0;
                 },
                 2 => {
-                  speed = 50.0;
+                  speed = 75.0;
                 },
                 _ => {
                   speed = self.speed;
@@ -92,10 +92,10 @@ impl Player {
               let speed;
               match self.status {
                 1 => {
-                  speed = 500.0;
+                  speed = 750.0;
                 },
                 2 => {
-                  speed = 25.0;
+                  speed = 75.0;
                 },
                 _ => {
                   speed = self.speed;
@@ -110,10 +110,10 @@ impl Player {
               let speed;
               match self.status {
                 1 => {
-                  speed = 500.0;
+                  speed = 750.0;
                 },
                 2 => {
-                  speed = 25.0;
+                  speed = 75.0;
                 },
                 _ => {
                   speed = self.speed;
@@ -128,10 +128,10 @@ impl Player {
               let speed;
               match self.status {
                 1 => {
-                  speed = 500.0;
+                  speed = 750.0;
                 },
                 2 => {
-                  speed = 25.0;
+                  speed = 75.0;
                 },
                 _ => {
                   speed = self.speed;
@@ -154,10 +154,10 @@ impl Player {
             let speed;
             match self.status {
               1 => {
-                speed = 500.0;
+                speed = 750.0;
               },
               2 => {
-                speed = 25.0;
+                speed = 75.0;
               },
               _ => {
                 speed = self.speed;
