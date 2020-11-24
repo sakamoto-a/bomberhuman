@@ -127,6 +127,13 @@ const resources = () => {
   return res;
 }
 
+function play_bgm() {
+  var myaudio = new Audio();
+  myaudio.src = './audio/bgm.mp3';
+  myaudio.volume = 1.0;
+  myaudio.play();
+}
+
 let clear_screen = () => {
   ctx.fillStyle = "green";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -183,7 +190,6 @@ function draw_player(x, y, angle, player_id) {
 
   ctx.fillStyle = "black";
 }
-
 
 function draw_bomb(x, y, type) {
   if (type == 0) {
@@ -339,6 +345,7 @@ let animationId = null;
 // Game loop
 let start = null;
 let prevTimestamp = null;
+play_bgm();
 let drawAndUpdate = (timestamp) => {
   // Initialization
   if (!prevTimestamp) {
@@ -452,7 +459,6 @@ let drawAndUpdate = (timestamp) => {
   draw_number(800, 0, Math.floor(time/60));
   draw_number(850, 0, Math.floor((time-Math.floor(time/60)*60)/10));
   draw_number(890, 0, Math.floor((time-Math.floor(time/60)*60)%10));
-
   prevTimestamp = timestamp;
   requestAnimationFrame(drawAndUpdate);
 };
