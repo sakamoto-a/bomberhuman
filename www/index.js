@@ -127,10 +127,15 @@ const resources = () => {
   return res;
 }
 
+var myaudio = new Audio('./audio/bgm.mp3');
+
 function play_bgm() {
-  var myaudio = new Audio('./audio/bgm.mp3');
   myaudio.autoplay = true;
   myaudio.play();
+}
+
+function stop_bgm() {
+  myaudio.pause();
 }
 
 let clear_screen = () => {
@@ -355,6 +360,7 @@ let drawAndUpdate = (timestamp) => {
 
   if (game_data.is_end()) {
     let winner = game_data.get_winner();
+    stop_bgm();
     result_menu_screen(winner);
     //alert("Game End");
     return;
