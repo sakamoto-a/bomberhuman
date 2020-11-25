@@ -2,8 +2,8 @@ import { GameData } from "bomberhuman";
 
 const canvas = document.getElementById("bomberhuman-canvas");
 const game_data = GameData.new();
-canvas.width = 1200; //game_data.width();
-canvas.height = 1000; //game_data.height();
+canvas.width = 800; //game_data.width();
+canvas.height = 700; //game_data.height();
 
 let ctx = canvas.getContext("2d");
 ctx.fillStyle = "green";
@@ -27,37 +27,37 @@ const resources = () => {
 
   res.player0.width = 50;
   res.player0.height = 50;
-  res.player0.src = "/image/human.png";
+  res.player0.src = "image/human.png";
   res.player1.width = 50;
   res.player1.height = 50;
-  res.player1.src = "/image/human.png";
+  res.player1.src = "image/human.png";
   res.player2.width = 50;
   res.player2.height = 50;
-  res.player2.src = "/image/human.png";
+  res.player2.src = "image/human.png";
   res.player3.width = 50;
   res.player3.height = 50;
-  res.player3.src = "/image/human.png";
+  res.player3.src = "image/human.png";
   res.bomb.width = 50;
   res.bomb.height = 50;
-  res.bomb.src = "/image/1p.png";
+  res.bomb.src = "image/1p.png";
   res.fire.width = 50;
   res.fire.height = 50;
-  res.fire.src = "/image/fire.png";
+  res.fire.src = "image/fire.png";
   res.bomb_item.width = 50;
   res.bomb_item.height = 50;
-  res.bomb_item.src = "/image/bomb_item.png";
+  res.bomb_item.src = "image/bomb_item.png";
   res.fire_item.width = 50;
   res.fire_item.height = 50;
-  res.fire_item.src = "/image/fire_item.png";
+  res.fire_item.src = "image/fire_item.png";
   res.speed_item.width = 50;
   res.speed_item.height = 50;
-  res.speed_item.src = "/image/speed_item.png";
+  res.speed_item.src = "image/speed_item.png";
   res.block.width = 50;
   res.block.height = 50;
-  res.block.src = "/image/block.jpg";
+  res.block.src = "image/block.jpg";
   res.softblock.width = 50;
   res.softblock.height = 50;
-  res.softblock.src = "/image/soft_block.png";
+  res.softblock.src = "image/soft_block.png";
 
   return res;
 }
@@ -264,8 +264,8 @@ const processKey = (key, f) => {
     case "ArrowDown":
       game_data.buttons("down", f);
       break;
-    case "/":
-      game_data.buttons("/", f);
+    case " ":
+      game_data.buttons("space", f);
       break;
     case "w":
       game_data.buttons("w", f);
