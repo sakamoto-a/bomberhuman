@@ -491,8 +491,8 @@ const processKey = (key, f) => {
     case "ArrowDown":
       game_data.buttons("down", f);
       break;
-    case "/":
-      game_data.buttons("/", f);
+    case " ":
+      game_data.buttons("space", f);
       break;
     case ".":
       game_data.buttons(".", f);
