@@ -128,9 +128,8 @@ const resources = () => {
 }
 
 function play_bgm() {
-  var myaudio = new Audio();
-  myaudio.src = './audio/bgm.mp3';
-  myaudio.volume = 1.0;
+  var myaudio = new Audio('./audio/bgm.mp3');
+  myaudio.autoplay = true;
   myaudio.play();
 }
 
@@ -345,7 +344,6 @@ let animationId = null;
 // Game loop
 let start = null;
 let prevTimestamp = null;
-play_bgm();
 let drawAndUpdate = (timestamp) => {
   // Initialization
   if (!prevTimestamp) {
@@ -467,7 +465,13 @@ const play = () => {
   drawAndUpdate();
 }
 
+
+var bgm_flag = false;
 const processKey = (key, f) => {
+  if (!bgm_flag) {
+    play_bgm();
+    bgm_flag=true;
+  }
   switch (key) {
     case "ArrowLeft":
       game_data.buttons("left", f);
