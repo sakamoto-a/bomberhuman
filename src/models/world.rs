@@ -91,7 +91,7 @@ impl World {
             match n {
                 0 => {
                     let point = Point::new(50.0, 50.0);
-                    players.push(Player::new(point, 150.0, 0.0, Actions::new("up", "down", "left", "right", "/", "."), 0));
+                    players.push(Player::new(point, 150.0, 0.0, Actions::new("up", "down", "left", "right", "space", "."), 0));
                 },
                 1 => {
                     let point = Point::new(650.0, 550.0);
