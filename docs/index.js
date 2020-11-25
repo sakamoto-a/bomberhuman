@@ -43,91 +43,91 @@ const resources = () => {
 
   res.player0.width = 50;
   res.player0.height = 50;
-  res.player0.src = "image/player1.png";
+  res.player0.src = "/image/player1.png";
   res.player1.width = 50;
   res.player1.height = 50;
-  res.player1.src = "image/player2.png";
+  res.player1.src = "/image/player2.png";
   res.player2.width = 50;
   res.player2.height = 50;
-  res.player2.src = "image/player3.png";
+  res.player2.src = "/image/player3.png";
   res.player3.width = 50;
   res.player3.height = 50;
-  res.player3.src = "image/player4.png";
+  res.player3.src = "/image/player4.png";
   res.bomb.width = 50;
   res.bomb.height = 50;
-  res.bomb.src = "image/bomb.png";
+  res.bomb.src = "/image/bomb.png";
   res.uni_bomb.width = 50;
   res.uni_bomb.height = 50;
-  res.uni_bomb.src = "image/uni_bomb.png";
+  res.uni_bomb.src = "/image/uni_bomb.png";
   res.gomu_bomb.width = 50;
   res.gomu_bomb.height = 50;
-  res.gomu_bomb.src = "image/gomu_bomb.png";
+  res.gomu_bomb.src = "/image/gomu_bomb.png";
   res.fire.width = 50;
   res.fire.height = 50;
-  res.fire.src = "image/fire.png";
+  res.fire.src = "/image/fire.png";
   res.bomb_item.width = 50;
   res.bomb_item.height = 50;
-  res.bomb_item.src = "image/bomb_item.png";
+  res.bomb_item.src = "/image/bomb_item.png";
   res.fire_item.width = 50;
   res.fire_item.height = 50;
-  res.fire_item.src = "image/fire_item.png";
+  res.fire_item.src = "/image/fire_item.png";
   res.speed_item.width = 50;
   res.speed_item.height = 50;
-  res.speed_item.src = "image/speed_item.png";
+  res.speed_item.src = "/image/speed_item.png";
   res.kick_item.width = 50;
   res.kick_item.height = 50;
-  res.kick_item.src = "image/kick_item.png";
+  res.kick_item.src = "/image/kick_item.png";
   res.dokuro_item.width = 50;
   res.dokuro_item.height = 50;
-  res.dokuro_item.src = "image/dokuro_item.png";
+  res.dokuro_item.src = "/image/dokuro_item.png";
   res.bomb_type_item.width = 50;
   res.bomb_type_item.height = 50;
-  res.bomb_type_item.src = "image/bomb_type_item.png";
+  res.bomb_type_item.src = "/image/bomb_type_item.png";
   res.block.width = 50;
   res.block.height = 50;
-  res.block.src = "image/block.jpg";
+  res.block.src = "/image/block.jpg";
   res.softblock.width = 50;
   res.softblock.height = 50;
-  res.softblock.src = "image/soft_block.png";
+  res.softblock.src = "/image/soft_block.png";
   res.item_frame.width = 50;
   res.item_frame.height = 50;
-  res.item_frame.src = "image/item_frame.jpg";
+  res.item_frame.src = "/image/item_frame.jpg";
   
   res.one.width = 40;
   res.one.height = 50;
-  res.one.src = "image/p1.gif";
+  res.one.src = "/image/p1.gif";
   res.two.width = 40;
   res.two.height = 50;
-  res.two.src = "image/p2.gif";
+  res.two.src = "/image/p2.gif";
   res.three.width = 40;
   res.three.height = 50;
-  res.three.src = "image/p3.gif";
+  res.three.src = "/image/p3.gif";
   res.four.width = 40;
   res.four.height = 50;
-  res.four.src = "image/p4.gif";
+  res.four.src = "/image/p4.gif";
   res.five.width = 40;
   res.five.height = 50;
-  res.five.src = "image/p5.gif";
+  res.five.src = "/image/p5.gif";
   res.six.width = 40;
   res.six.height = 50;
-  res.six.src = "image/p6.gif";
+  res.six.src = "/image/p6.gif";
   res.seven.width = 40;
   res.seven.height = 50;
-  res.seven.src = "image/p7.gif";
+  res.seven.src = "/image/p7.gif";
   res.eight.width = 40;
   res.eight.height = 50;
-  res.eight.src = "image/p8.gif";
+  res.eight.src = "/image/p8.gif";
   res.nine.width = 40;
   res.nine.height = 50;
-  res.nine.src = "image/p9.gif";
+  res.nine.src = "/image/p9.gif";
   res.zero.width = 40;
   res.zero.height = 50;
-  res.zero.src = "image/p0.gif";
+  res.zero.src = "/image/p0.gif";
 
   return res;
 }
 
-var myaudio = new Audio('audio/bgm.mp3');
+var myaudio = new Audio('./audio/bgm.mp3');
 
 function play_bgm() {
   myaudio.autoplay = true;
@@ -491,8 +491,8 @@ const processKey = (key, f) => {
     case "ArrowDown":
       game_data.buttons("down", f);
       break;
-    case "/":
-      game_data.buttons("/", f);
+    case " ":
+      game_data.buttons("space", f);
       break;
     case ".":
       game_data.buttons(".", f);
