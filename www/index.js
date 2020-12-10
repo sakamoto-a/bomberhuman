@@ -342,6 +342,148 @@ function draw_hurry_up() {
   ctx.fillText("HURRY UP", x, y);
 }
 
+function game_pad_update() {
+  if(!(window.Gamepad)) return;
+ 	if(!(navigator.getGamepads)) return;
+  var gamepad_list = navigator.getGamepads();
+  var num = gamepad_list.length;
+  for(let i=0;i < num;i++){
+    let gamepad = gamepad_list[i];
+    if (!gamepad) continue;
+    if (gamepad.mapping == "standard") {
+      switch (i) {
+        case 0:
+          if (gamepad.buttons[12].pressed || (gamepad.axes[1] < -0.5)) {
+            game_data.buttons("up", 1);
+          } else {
+            game_data.buttons("up", 0);
+          }
+          if (gamepad.buttons[13].pressed || (gamepad.axes[1] > 0.5)) {
+            game_data.buttons("down", 1);
+          } else {
+            game_data.buttons("down", 0);
+          }
+          if (gamepad.buttons[14].pressed || (gamepad.axes[0] < -0.5)) {
+            game_data.buttons("left", 1);
+          } else {
+            game_data.buttons("left", 0);
+          }
+          if (gamepad.buttons[15].pressed || (gamepad.axes[0] > 0.5)) {
+            game_data.buttons("right", 1);
+          } else {
+            game_data.buttons("right", 0);
+          }
+          if (gamepad.buttons[0].pressed) {
+            game_data.buttons("space", 1);
+          } else {
+            game_data.buttons("space", 0);
+          }
+          if (gamepad.buttons[5].pressed) {
+            game_data.buttons(".", 1);
+          } else {
+            game_data.buttons(".", 0);
+          }
+          break;
+        case 1:
+          if (gamepad.buttons[12].pressed || (gamepad.axes[1] < -0.5)) {
+            game_data.buttons("w", 1);
+          } else {
+            game_data.buttons("w", 0);
+          }
+          if (gamepad.buttons[13].pressed || (gamepad.axes[1] > 0.5)) {
+            game_data.buttons("s", 1);
+          } else {
+            game_data.buttons("s", 0);
+          }
+          if (gamepad.buttons[14].pressed || (gamepad.axes[0] < -0.5)) {
+            game_data.buttons("a", 1);
+          } else {
+            game_data.buttons("a", 0);
+          }
+          if (gamepad.buttons[15].pressed || (gamepad.axes[0] > 0.5)) {
+            game_data.buttons("d", 1);
+          } else {
+            game_data.buttons("d", 0);
+          }
+          if (gamepad.buttons[0].pressed) {
+            game_data.buttons("x", 1);
+          } else {
+            game_data.buttons("x", 0);
+          }
+          if (gamepad.buttons[5].pressed) {
+            game_data.buttons("q", 1);
+          } else {
+            game_data.buttons("q", 0);
+          }
+        case 2:
+          if (gamepad.buttons[12].pressed || (gamepad.axes[1] < -0.5)) {
+            game_data.buttons("t", 1);
+          } else {
+            game_data.buttons("t", 0);
+          }
+          if (gamepad.buttons[13].pressed || (gamepad.axes[1] > 0.5)) {
+            game_data.buttons("g", 1);
+          } else {
+            game_data.buttons("g", 0);
+          }
+          if (gamepad.buttons[14].pressed || (gamepad.axes[0] < -0.5)) {
+            game_data.buttons("f", 1);
+          } else {
+            game_data.buttons("f", 0);
+          }
+          if (gamepad.buttons[15].pressed || (gamepad.axes[0] > 0.5)) {
+            game_data.buttons("h", 1);
+          } else {
+            game_data.buttons("h", 0);
+          }
+          if (gamepad.buttons[0].pressed) {
+            game_data.buttons("b", 1);
+          } else {
+            game_data.buttons("b", 0);
+          }
+          if (gamepad.buttons[5].pressed) {
+            game_data.buttons("r", 1);
+          } else {
+            game_data.buttons("r", 0);
+          }
+        case 3:
+          if (gamepad.buttons[12].pressed || (gamepad.axes[1] < -0.5)) {
+            game_data.buttons("i", 1);
+          } else {
+            game_data.buttons("i", 0);
+          }
+          if (gamepad.buttons[13].pressed || (gamepad.axes[1] > 0.5)) {
+            game_data.buttons("k", 1);
+          } else {
+            game_data.buttons("k", 0);
+          }
+          if (gamepad.buttons[14].pressed || (gamepad.axes[0] < -0.5)) {
+            game_data.buttons("j", 1);
+          } else {
+            game_data.buttons("j", 0);
+          }
+          if (gamepad.buttons[15].pressed || (gamepad.axes[0] > 0.5)) {
+            game_data.buttons("l", 1);
+          } else {
+            game_data.buttons("l", 0);
+          }
+          if (gamepad.buttons[0].pressed) {
+            game_data.buttons(",", 1);
+          } else {
+            game_data.buttons(",", 0);
+          }
+          if (gamepad.buttons[5].pressed) {
+            game_data.buttons("u", 1);
+          } else {
+            game_data.buttons("u", 0);
+          }
+        default: 
+          break;
+      }
+    }
+  }
+}
+
 let res = resources();
 
 let animationId = null;
@@ -368,6 +510,7 @@ let drawAndUpdate = (timestamp) => {
 
   // Update and draw
   let progress = (timestamp - prevTimestamp) / 1000;
+  game_pad_update(); 
   game_data.update(progress);
   clear_screen();
 
