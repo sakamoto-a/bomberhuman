@@ -415,6 +415,7 @@ function game_pad_update() {
           } else {
             game_data.buttons("q", 0);
           }
+          break;
         case 2:
           if (gamepad.buttons[12].pressed || (gamepad.axes[1] < -0.5)) {
             game_data.buttons("t", 1);
@@ -446,6 +447,7 @@ function game_pad_update() {
           } else {
             game_data.buttons("r", 0);
           }
+          break;
         case 3:
           if (gamepad.buttons[12].pressed || (gamepad.axes[1] < -0.5)) {
             game_data.buttons("i", 1);
@@ -477,6 +479,7 @@ function game_pad_update() {
           } else {
             game_data.buttons("u", 0);
           }
+          break;
         default: 
           break;
       }
