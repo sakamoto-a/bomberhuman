@@ -16,6 +16,7 @@ pub struct GameData {
 
 #[wasm_bindgen]
 impl GameData {
+    #[wasm_bindgen(constructor)]
     pub fn new() -> GameData {
         let width = 1024.0;
         let height = 840.0;

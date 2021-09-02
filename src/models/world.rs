@@ -12,7 +12,7 @@ use crate::controller::Buttons;
 use crate::controller::Events;
 use rand::seq::SliceRandom;
 use rand::Rng;
-use wasm_bindgen::prelude::*;
+//use wasm_bindgen::prelude::*;
 
 pub struct World {
     pub blocks: Vec<Block>,
@@ -234,43 +234,43 @@ impl World {
                       let item_type = Collision::get_item(event.position, &mut self.items, self.players[event.player_id].size);
                       match item_type {
                         1 => {
-                         sound("get_item");
+                         //sound("get_item");
                          if self.players[event.player_id].items.fire_up < 8 {
                            self.players[event.player_id].firepower += 1;
                          }
                          self.players[event.player_id].items.fire_up += 1;
                         },
                         2 => {
-                         sound("get_item");
+                         //sound("get_item");
                          if self.players[event.player_id].items.bomb_up < 8 {
                            self.players[event.player_id].bomb_num += 1;
                          }
                          self.players[event.player_id].items.bomb_up += 1;
                         },
                         3 => {
-                         sound("get_item");
+                         //sound("get_item");
                          if self.players[event.player_id].items.speed_up < 8{
                            self.players[event.player_id].speed += 25.0;
                          }
                          self.players[event.player_id].items.speed_up += 1;
                         },
                         4 => {
-                         sound("get_item");
+                         //sound("get_item");
                          self.players[event.player_id].kick = true;
                          self.players[event.player_id].items.kick += 1;
                         },
                         5 => {
-                         sound("get_item");
+                         //sound("get_item");
                          self.players[event.player_id].bomb_type = 1;
                          self.players[event.player_id].items.uni_bomb += 1;
                         },
                         6 => {
-                         sound("get_item");
+                         //sound("get_item");
                          self.players[event.player_id].bomb_type = 2;
                          self.players[event.player_id].items.gomu_bomb += 1;
                         },
                         7 => {
-                         sound("get_dokuro");
+                         //sound("get_dokuro");
                           let mut rng = rand::thread_rng();
                           let i: u8 = rng.gen();
                           self.players[event.player_id].status = (i % 3 + 1) as i8;
@@ -366,7 +366,7 @@ impl World {
                   } else {
                     bomb_id = self.bombs[self.bombs.len()-1].bomb_id + 1;
                   }
-                  sound("put_bomb");
+                  //sound("put_bomb");
                   self.bombs.push(Bomb::new(bomb_id, event.position, event.firepower, event.player_id, over_players, event.bomb_type));
                   self.players[event.player_id].sub_bomb_num();
                 }
@@ -449,7 +449,7 @@ impl World {
               },
               "br" => {
                 self.bombs.retain(|x| x.life > 0.0);
-                sound("explosion");
+                //sound("explosion");
               },
               "fn" => {
                 if Collision::can_fire(event.position, &mut self.blocks, Size::new(50.0,50.0)) {
@@ -634,12 +634,7 @@ impl World {
   }
 }
 
-#[wasm_bindgen(module = "/www/audio.js")]
-extern "C" {
-  fn play_audio(s: &str);
-}
-
-#[wasm_bindgen]
-pub fn sound (sound_type: &str) {
-  play_audio(sound_type);
-}
+//#[wasm_bindgen]
+//pub fn sound (sound_type: &str) {
+//  play_audio(sound_type);
+//}

@@ -27,7 +27,9 @@
   },
   "homepage": "https://github.com/rustwasm/create-wasm-app#readme",
   "dependencies": {
-    "bomberhuman": "file:../pkg"
+    "bomberhuman": "file:../pkg",
+    "http": "0.0.1-security",
+    "socket.io": "^4.2.0"
   },
   "devDependencies": {
     "hello-wasm-pack": "^0.1.0",

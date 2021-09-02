@@ -1,14 +1,44 @@
-import { GameData } from "bomberhuman";
+const socket = io();
 
 const canvas = document.getElementById("bomberhuman-canvas");
-const game_data = GameData.new();
-canvas.width = 1200; //game_data.width();
+canvas.width = 1000; //game_data.width();
 canvas.height = 1000; //game_data.height();
 
 let ctx = canvas.getContext("2d");
 ctx.fillStyle = "green";
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+class button {
+  constructor(x, y, kind) {
+    this.x = x;
+    this.y = y;
+    this.w = 100;
+    this.h = 40;
+    this.kind = kind;
+  }
+
+  draw() {
+    ctx.drawImage(res.start, this.x, this.y, res.start.width, res.start.height);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.fillStyle = "black";
+  }
+
+  testHit(point) {
+    return (this.x <= point.x && point.x <= this.x + this.w) &&
+           (this.y <= point.y && point.y <= this.y + this.h);
+  }
+}
+
+class operation {
+  constructor() {
+    this.up = false;
+    this.down = false;
+    this.right = false;
+    this.left = false;
+    this.putbomb = false;
+    this.neutral = false;
+  }
+}
 
 const resources = () => {
   let res = {
@@ -39,95 +69,99 @@ const resources = () => {
     seven: document.createElement('img'),
     eight: document.createElement('img'),
     nine: document.createElement('img'),
+    start: document.createElement('img'),
   }
 
   res.player0.width = 50;
   res.player0.height = 50;
-  res.player0.src = "/image/player1.png";
+  res.player0.src = "./public/image/player1.png";
   res.player1.width = 50;
   res.player1.height = 50;
-  res.player1.src = "/image/player2.png";
+  res.player1.src = "./public/image/player2.png";
   res.player2.width = 50;
   res.player2.height = 50;
-  res.player2.src = "/image/player3.png";
+  res.player2.src = "./public/image/player3.png";
   res.player3.width = 50;
   res.player3.height = 50;
-  res.player3.src = "/image/player4.png";
+  res.player3.src = "./public/image/player4.png";
   res.bomb.width = 50;
   res.bomb.height = 50;
-  res.bomb.src = "/image/bomb.png";
+  res.bomb.src = "./public/image/bomb.png";
   res.uni_bomb.width = 50;
   res.uni_bomb.height = 50;
-  res.uni_bomb.src = "/image/uni_bomb.png";
+  res.uni_bomb.src = "./public/image/uni_bomb.png";
   res.gomu_bomb.width = 50;
   res.gomu_bomb.height = 50;
-  res.gomu_bomb.src = "/image/gomu_bomb.png";
+  res.gomu_bomb.src = "./public/image/gomu_bomb.png";
   res.fire.width = 50;
   res.fire.height = 50;
-  res.fire.src = "/image/fire.png";
+  res.fire.src = "./public/image/fire.png";
   res.bomb_item.width = 50;
   res.bomb_item.height = 50;
-  res.bomb_item.src = "/image/bomb_item.png";
+  res.bomb_item.src = "./public/image/bomb_item.png";
   res.fire_item.width = 50;
   res.fire_item.height = 50;
-  res.fire_item.src = "/image/fire_item.png";
+  res.fire_item.src = "./public/image/fire_item.png";
   res.speed_item.width = 50;
   res.speed_item.height = 50;
-  res.speed_item.src = "/image/speed_item.png";
+  res.speed_item.src = "./public/image/speed_item.png";
   res.kick_item.width = 50;
   res.kick_item.height = 50;
-  res.kick_item.src = "/image/kick_item.png";
+  res.kick_item.src = "./public/image/kick_item.png";
   res.dokuro_item.width = 50;
   res.dokuro_item.height = 50;
-  res.dokuro_item.src = "/image/dokuro_item.png";
+  res.dokuro_item.src = "./public/image/dokuro_item.png";
   res.bomb_type_item.width = 50;
   res.bomb_type_item.height = 50;
-  res.bomb_type_item.src = "/image/bomb_type_item.png";
+  res.bomb_type_item.src = "./public/image/bomb_type_item.png";
   res.block.width = 50;
   res.block.height = 50;
-  res.block.src = "/image/block.jpg";
+  res.block.src = "./public/image/block.jpg";
   res.softblock.width = 50;
   res.softblock.height = 50;
-  res.softblock.src = "/image/soft_block.png";
+  res.softblock.src = "./public/image/soft_block.png";
   res.item_frame.width = 50;
   res.item_frame.height = 50;
-  res.item_frame.src = "/image/item_frame.jpg";
+  res.item_frame.src = "./public/image/item_frame.jpg";
   
   res.one.width = 40;
   res.one.height = 50;
-  res.one.src = "/image/p1.gif";
+  res.one.src = "./public/image/p1.gif";
   res.two.width = 40;
   res.two.height = 50;
-  res.two.src = "/image/p2.gif";
+  res.two.src = "./public/image/p2.gif";
   res.three.width = 40;
   res.three.height = 50;
-  res.three.src = "/image/p3.gif";
+  res.three.src = "./public/image/p3.gif";
   res.four.width = 40;
   res.four.height = 50;
-  res.four.src = "/image/p4.gif";
+  res.four.src = "./public/image/p4.gif";
   res.five.width = 40;
   res.five.height = 50;
-  res.five.src = "/image/p5.gif";
+  res.five.src = "./public/image/p5.gif";
   res.six.width = 40;
   res.six.height = 50;
-  res.six.src = "/image/p6.gif";
+  res.six.src = "./public/image/p6.gif";
   res.seven.width = 40;
   res.seven.height = 50;
-  res.seven.src = "/image/p7.gif";
+  res.seven.src = "./public/image/p7.gif";
   res.eight.width = 40;
   res.eight.height = 50;
-  res.eight.src = "/image/p8.gif";
+  res.eight.src = "./public/image/p8.gif";
   res.nine.width = 40;
   res.nine.height = 50;
-  res.nine.src = "/image/p9.gif";
+  res.nine.src = "./public/image/p9.gif";
   res.zero.width = 40;
   res.zero.height = 50;
-  res.zero.src = "/image/p0.gif";
+  res.zero.src = "./public/image/p0.gif";
+  res.start.width = 100;
+  res.start.height = 40;
+  res.start.src = "./public/image/start.png";
 
   return res;
 }
 
-var myaudio = new Audio('./audio/bgm.mp3');
+var myaudio = new Audio('./public/audio/bgm.mp3');
 
 function play_bgm() {
   myaudio.autoplay = true;
@@ -490,130 +524,93 @@ function game_pad_update() {
 let res = resources();
 
 let animationId = null;
+let game_data = null;
+let winner = 0;
+let end_flag = false;
+let start_flag = false;
+var prevTimestamp=0;
+var start_button = null;
+var ope = new operation;
+
+socket.on('update_game', (world) => {
+  game_data = world;
+});
+
+socket.on('end', (win_player) => {
+  end_flag = true;
+  winner = win_player
+});
+
+socket.on('start', () => {
+  start_flag = true;
+  socket.emit('update', ope);
+});
 
 // Game loop
-let start = null;
-let prevTimestamp = null;
 let drawAndUpdate = (timestamp) => {
-  // Initialization
-  if (!prevTimestamp) {
-    start = timestamp;
-    prevTimestamp = timestamp;
-    requestAnimationFrame(drawAndUpdate);
-    return;
-  }
-
-  if (game_data.is_end()) {
-    let winner = game_data.get_winner();
-    stop_bgm();
-    result_menu_screen(winner);
-    //alert("Game End");
-    return;
-  }
-
-  // Update and draw
-  let progress = (timestamp - prevTimestamp) / 1000;
-  game_pad_update(); 
-  game_data.update(progress);
-  clear_screen();
-
-  let bomb_num = game_data.get_bomb_num();
-  var b_x = [];
-  var b_y = [];
-  var b_type = [];
-  for(let i=0; i<bomb_num; i++) {
-    b_x[i] = game_data.x(i, "bomb");
-    b_y[i] = game_data.y(i, "bomb");
-    b_type[i] = game_data.what_type(i, "bomb");
-    draw_bomb(b_x[i], b_y[i], b_type[i]);
-  }
-
-  let fire_num = game_data.get_fire_num();
-  var f_x = [];
-  var f_y = [];
-  for(let i=0; i<fire_num; i++) {
-    f_x[i] = game_data.x(i, "fire");
-    f_y[i] = game_data.y(i, "fire");
-    draw_fire(f_x[i], f_y[i]);
-  }
-
-  let item_num = game_data.get_item_num();
-  var i_x = [];
-  var i_y = [];
-  var i_type = [];
-  for(let i=0; i<item_num; i++) {
-    i_x[i] = game_data.x(i, "item");
-    i_y[i] = game_data.y(i, "item");
-    i_type[i] = game_data.what_type(i, "item");
-    draw_item(i_x[i], i_y[i], i_type[i]);
-  }
-
-  let softblock_num = game_data.get_softblock_num();
-  var sbl_x = [];
-  var sbl_y = [];
-  for(let i=0; i<softblock_num; i++) {
-    sbl_x[i] = game_data.x(i, "softblock");
-    sbl_y[i] = game_data.y(i, "softblock");
-    draw_softblock(sbl_x[i], sbl_y[i]);
-  }
-
-  let player_num = game_data.get_player_num();
-  var p_x = [];
-  var p_y = [];
-  var angle = [];
-  for(let i=0; i<player_num; i++) {
-    p_x[i] = game_data.x(i, "player");
-    p_y[i] = game_data.y(i, "player");
-    angle[i] = game_data.angle(i);
-    if (p_x[i] >= 0) {
-      draw_player(p_x[i], p_y[i], angle[i], i);
+    clear_screen();
+  console.log(game_data);
+    let progress = (timestamp - prevTimestamp) / 1000;
+  if (!start_flag) { 
+    if (start_button) {
+      console.log('start');
+      start_button.draw();
     }
-  }
+  } else {
+    if (end_flag) {
+      stop_bgm();
+      result_menu_screen(winner);
+      //alert("Game End");
+      return;
+    }
+    if (game_data != null) {
 
-  let block_num = game_data.get_block_num();
-  var bl_x = [];
-  var bl_y = [];
-  for(let i=0; i<block_num; i++) {
-    bl_x[i] = game_data.x(i, "block");
-    bl_y[i] = game_data.y(i, "block");
-    draw_block(bl_x[i], bl_y[i]);
-  }
+    // Update and draw
 
+    for(let i=0; i<game_data.bombs.length; i++) {
+      draw_bomb(game_data.bombs[i].x, game_data.bombs[i].y, game_data.bombs[i].type);
+    }
 
-  let fire_item_num = game_data.get_fire_item_num();
-  for (let i=0; i<fire_item_num; i++) {
-    draw_item(800+i*25, 100, 1);
+    for(let i=0; i<game_data.fires.length; i++) {
+      draw_fire(game_data.fires[i].x, game_data.fires[i].y);
+    }
+
+    for(let i=0; i<game_data.items.length; i++) {
+      console.log("draw_item");
+      console.log(game_data.items[i].x)
+      draw_item(game_data.items[i].x, game_data.items[i].y, game_data.items[i].type);
+    }
+
+    for(let i=0; i<game_data.softblocks.length; i++) {
+      draw_softblock(game_data.softblocks[i].x, game_data.softblocks[i].y);
+    }
+
+    for(let i=0; i<game_data.players.length; i++) {
+      if (game_data.players[i].x >= 0) {
+        draw_player(game_data.players[i].x, game_data.players[i].y, game_data.players[i].angle, i);
+      }
+    }
+
+    for(let i=0; i<game_data.blocks.length; i++) {
+      draw_block(game_data.blocks[i].x, game_data.blocks[i].y);
+    }
+
+    if ((game_data.time < 31.75 && game_data.time > 31.5) || (game_data.time < 31.25 && game_data.time > 31) || (game_data.time < 30.75 && game_data.time > 30.5)){
+      draw_hurry_up();
+    }
+    var time = Math.floor(game_data.time);
+    draw_number(800, 0, Math.floor(time/60));
+    draw_number(850, 0, Math.floor((time-Math.floor(time/60)*60)/10));
+    draw_number(890, 0, Math.floor((time-Math.floor(time/60)*60)%10));
+    game_pad_update();
+    socket.emit('update', ope);
   }
-  let bomb_item_num = game_data.get_bomb_item_num();
-  for (let i=0; i<bomb_item_num; i++) {
-    draw_item(800+i*25, 150, 2);
-  }
-  let speed_item_num = game_data.get_speed_item_num();
-  for (let i=0; i<speed_item_num; i++) {
-    draw_item(800+i*25, 200, 3);
-  }
-  let kick_item_num = game_data.get_kick_item_num();
-  for (let i=0; i<kick_item_num; i++) {
-    draw_item(800+i*25, 250, 4);
-  }
-  let uni_item_num = game_data.get_uni_item_num();
-  for (let i=0; i<uni_item_num; i++) {
-    draw_item(800+i*25, 300, 5);
-  }
-  
-  let time = game_data.get_time();
-  if ((time < 31.75 && time > 31.5) || (time < 31.25 && time > 31) || (time < 30.75 && time > 30.5)){
-    draw_hurry_up();
-  }
-  time = Math.floor(time);
-  draw_number(800, 0, Math.floor(time/60));
-  draw_number(850, 0, Math.floor((time-Math.floor(time/60)*60)/10));
-  draw_number(890, 0, Math.floor((time-Math.floor(time/60)*60)%10));
-  prevTimestamp = timestamp;
+}
   requestAnimationFrame(drawAndUpdate);
 };
 
 const play = () => {
+  start_button = new button(100, 50, 'start');
   drawAndUpdate();
 }
 
@@ -621,85 +618,45 @@ const play = () => {
 var bgm_flag = false;
 const processKey = (key, f) => {
   if (!bgm_flag) {
-    play_bgm();
+    //play_bgm();
     bgm_flag=true;
   }
   switch (key) {
     case "ArrowLeft":
-      game_data.buttons("left", f);
+      ope.left = f;
       break;
     case "ArrowRight":
-      game_data.buttons("right", f);
+      ope.right = f;
       break;
     case "ArrowUp":
-      game_data.buttons("up", f);
+      ope.up = f;
       break;
     case "ArrowDown":
-      game_data.buttons("down", f);
+      ope.down = f;
       break;
     case " ":
-      game_data.buttons("space", f);
+      ope.putbomb = f;
       break;
     case ".":
-      game_data.buttons(".", f);
-      break;
-    case "w":
-      game_data.buttons("w", f);
-      break;
-    case "s":
-      game_data.buttons("s", f);
-      break;
-    case "a":
-      game_data.buttons("a", f);
-      break;
-    case "d":
-      game_data.buttons("d", f);
-      break;
-    case "x":
-      game_data.buttons("x", f);
-      break;
-    case "q":
-      game_data.buttons("q", f);
-      break;
-    case "t":
-      game_data.buttons("t", f);
-      break;
-    case "g":
-      game_data.buttons("g", f);
-      break;
-    case "f":
-      game_data.buttons("f", f);
-      break;
-    case "h":
-      game_data.buttons("h", f);
-      break;
-    case "b":
-      game_data.buttons("b", f);
-      break;
-    case "r":
-      game_data.buttons("r", f);
-      break;
-    case "i":
-      game_data.buttons("i", f);
-      break;
-    case "k":
-      game_data.buttons("k", f);
-      break;
-    case "j":
-      game_data.buttons("j", f);
-      break;
-    case "l":
-      game_data.buttons("l", f);
-      break;
-    case ",":
-      game_data.buttons(",", f);
-      break;
-    case "u":
-      game_data.buttons("u", f);
+      ope.neutral = f;
       break;
   }
 }
 
+canvas.addEventListener("click", e => {
+  // マウスの座標をCanvas内の座標とあわせるため
+  const rect = canvas.getBoundingClientRect();
+  const point = {
+    x: e.clientX - rect.left,
+    y: e.clientY - rect.top
+  };
+  console.log(point);
+  if (start_button != null && start_button.testHit(point)) {
+    //console.log("clicked");
+    socket.emit('my_name');
+    start_button = null;
+  }
+});
 
 document.addEventListener('keydown', e => processKey(e.key, 1));
 document.addEventListener('keyup', e => processKey(e.key, 0));
